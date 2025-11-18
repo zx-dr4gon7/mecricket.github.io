@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cricket Team Stats</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+
+<body class="has-background-light">
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title has-text-centered">Cricket Team Stats</h1>
+      <p class="subtitle has-text-centered">Auto-updating from Google Sheets</p>
+
+      <!-- BATTING SECTION -->
+      <h2 class="title is-4">Batting Stats</h2>
+      <table class="table is-striped is-fullwidth" id="battingTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- BOWLING SECTION -->
+      <h2 class="title is-4" style="margin-top: 40px;">Bowling Stats</h2>
+      <table class="table is-striped is-fullwidth" id="bowlingTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <script>
+    async function loadSheet(csvUrl, tableId) {
+      const response = await fetch(csvUrl);
+      const text = await response.text();
+      const rows = text.split("\n").map(r => r.split(","));
+
+      const table = document.getElementById(tableId);
+
+    // Header
+    table.querySelector("thead").innerHTML =
+        "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
+
+    // Body
+    table.querySelector("tbody").innerHTML =
+        rows.slice(1)
+            .map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>")
+            .join(""); 
+    }
+
+    // 👉 Replace these with your actual CSV URLs
+    const battingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
+    const bowlingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
+
+    loadSheet(battingCSV, "battingTable");
+    loadSheet(bowlingCSV, "bowlingTable");
+  </script>
+
+</body>
+</html>
