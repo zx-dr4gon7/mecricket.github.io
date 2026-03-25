@@ -428,19 +428,33 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── CSV fetcher ───────────────────────────────────────────────
 async function fetchCSV(url) {
-  try {
-    const resp = await fetch(url);
-    const text = await resp.text();
-    // Split into rows and then into cells, trimming extra spaces
-    const allRows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
-    
-    // 1. Try to find the row that contains 'player' or 'date' (case insensitive)
-    let headerIndex = allRows.findIndex(row => 
-      row.some(cell => {
-        const c = cell.toLowerCase();
-        return c === 'player' || c === 'date' || c === 'batter';
-      })
-    );
+  const text = await (await fetch(url)).text();
+  // Split into rows and then into cells, trimming whitespace
+  const allRows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
+  
+  // Find the row that contains 'Player' or 'Date'
+  let headerIndex = allRows.findIndex(row => 
+    row.some(cell => {
+      const c = cell.toLowerCase();
+      return c === 'player' || c === 'date';
+    })
+  );
+
+  if (headerIndex === -1) return { headers: [], rows: [] };
+
+  let headers = allRows[headerIndex];
+  
+  // Since you have an empty Column A, we need to find where 'Player' actually starts
+  const firstColIndex = headers.findIndex(h => h.toLowerCase() === 'player' || h.toLowerCase() === 'date');
+  
+  // Trim the headers and all rows to start from that column
+  headers = headers.slice(firstColIndex);
+  const rows = allRows.slice(headerIndex + 1)
+    .map(row => row.slice(firstColIndex))
+    .filter(r => r[0] !== '' && r.length > 1); // Skip empty rows
+
+  return { headers, rows };
+}
 
     // 2. Fallback: If we can't find 'Player', just assume the first row is the header
     if (headerIndex === -1) {
