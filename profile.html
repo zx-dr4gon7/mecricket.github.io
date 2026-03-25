@@ -8,23 +8,61 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 
+  <button id="theme-toggle" class="button is-ghost" style="font-size: 1.2rem; color: var(--accent);">
+  <span id="theme-icon">🌙</span>
+  </button>
+
   <style>
     /* ════════════════════════════════════════════════════
        COLOUR PALETTE
        ════════════════════════════════════════════════════ */
     /* ☀️ LIGHT THEME & HIGHLIGHTING */
 :root {
-  --bg: #f0f2f5;           /* Light blue-grey background */
-  --surface: #ffffff;      /* White cards */
-  --border: #dee2e6;       /* Light border */
-  --text: #1a2b4b;         /* Dark navy text */
-  --subtext: #4a5568;      /* Grey subtext */
-  --accent: #0066ff;       /* Main blue */
-  --accent-soft: rgba(0, 102, 255, 0.1);
-  --win-bg: #e6fffa;       /* Green highlight for the winner */
-  --win-text: #008767;     /* Dark green text for winner */
-  --elite-bg: #fff9db;     /* Gold for elite stats */
-  --elite-text: #856404;
+  /* 🌑 DARK THEME (Default) */
+  --bg: #060e1f;
+  --surface: #0d1e3a;
+  --border: #1a2b4b;
+  --accent: #3b9eff;
+  --muted: #2a5080;
+  --text: #e8f2ff;
+  --subtext: #6a9fc8;
+  --elite: #4ade80;
+  --vs-left: #3b9eff;
+  --vs-right: #f97316;
+  
+  /* Fonts - Preserved */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  --transition: 0.3s ease;
+}
+
+/* ☀️ LIGHT THEME */
+body.light-mode {
+  --bg: #f4f7fa;
+  --surface: #ffffff;
+  --border: #d1d9e6;
+  --accent: #0066ff;
+  --muted: #8a99af;
+  --text: #1a2b4b;
+  --subtext: #5c6e8c;
+  --elite: #008767;
+  --vs-left: #0066ff;
+  --vs-right: #e65100;
+}
+
+/* Apply fonts globally */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+h1, h2, h3, .vs-player-name {
+  font-family: var(--font-display);
+  text-transform: uppercase;
 }
 
 /* Winner Highlighting Styles */
