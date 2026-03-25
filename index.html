@@ -1,64 +1,617 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cricket Team Stats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maine East Cricket</title>
   <link rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-</head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  FONTS — change the font here to update the whole site.     ║
+  ║  Replace both the ?family= URL param AND the font-family    ║
+  ║  values in the :root block below.                           ║
+  ║                                                             ║
+  ║  Display font (headings): Oswald                            ║
+  ║  Body font (tables/text): DM Sans                           ║
+  ║  Monospace font (labels):  IBM Plex Mono                    ║
+  ║                                                             ║
+  ║  Browse fonts at fonts.google.com                           ║
+  ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-<body class="has-background-light">
+  <style>
+    /* ════════════════════════════════════════════════════════════
+       COLOUR PALETTE — edit these variables to re-theme the site.
+       Every colour on the page comes from one of these values.
+       ════════════════════════════════════════════════════════════ */
+    :root {
+      --bg:        #060e1f;   /* page background — very dark navy        */
+      --surface:   #0d1e3a;   /* card/table background — deep cobalt     */
+      --border:    #1a3260;   /* border lines                            */
+      --header-bg: #0a2050;   /* table header row background             */
+      --accent:    #3b9eff;   /* primary accent — bright azure blue      */
+      --accent2:   #7ec8ff;   /* lighter accent for highlights           */
+      --muted:     #2a5080;   /* muted elements                          */
+      --text:      #e8f2ff;   /* primary text — cool white               */
+      --subtext:   #6a9fc8;   /* secondary/muted text                    */
 
-  <section class="section">
-    <div class="container">
-      <h1 class="title has-text-centered">Cricket Team Stats</h1>
-      <p class="subtitle has-text-centered">View Maine East Cricket Club Stats</p>
-
-      <!-- BATTING SECTION -->
-      <h2 class="title is-4">Batting Stats</h2>
-      <table class="table is-striped is-fullwidth" id="battingTable">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-
-      <!-- BOWLING SECTION -->
-      <h2 class="title is-4" style="margin-top: 40px;">Bowling Stats</h2>
-      <table class="table is-striped is-fullwidth" id="bowlingTable">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-
-    </div>
-  </section>
-
-  <script>
-    async function loadSheet(csvUrl, tableId) {
-      const response = await fetch(csvUrl);
-      const text = await response.text();
-      const rows = text.split("\n").map(r => r.split(","));
-
-      const table = document.getElementById(tableId);
-
-    // Header
-    table.querySelector("thead").innerHTML =
-        "<tr>" + rows[0].map(h => `<th>${h}</th>`).join("") + "</tr>";
-
-    // Body
-    table.querySelector("tbody").innerHTML =
-        rows.slice(1)
-            .map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>")
-            .join(""); 
+      /* ── Font families — change these to match new Google Fonts ── */
+      --font-display: 'Oswald', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'IBM Plex Mono', monospace;
     }
 
-    // 👉 Replace these with your actual CSV URLs
-    const battingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
-    const bowlingCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-    loadSheet(battingCSV, "battingTable");
-    loadSheet(bowlingCSV, "bowlingTable");
-  </script>
+    /* subtle dot-grid texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(59,158,255,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none; z-index: 0;
+    }
 
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      height: 68px;
+      background: rgba(6,14,31,0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 2.5rem; gap: 1rem;
+    }
+    .header-logo {
+      width: 36px; height: 36px;
+      background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    /* ── SITE TITLE — edit the text inside <h1> in the HTML below ── */
+    header h1 {
+      font-family: var(--font-display);
+      font-size: 1.25rem; letter-spacing: 0.04em;
+      text-transform: uppercase; color: var(--text);
+    }
+    header h1 span { color: var(--accent); }
+    .header-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.68rem; color: var(--subtext);
+      border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 20px;
+    }
+
+    /* ── Hero ── */
+    .hero-band {
+      position: relative; z-index: 1;
+      padding: 3rem 2.5rem 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .hero-band h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 700; line-height: 1.0;
+      letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .hero-band h2 em { font-style: normal; color: var(--accent); }
+    .hero-band p { margin-top: 0.75rem; color: var(--subtext); font-size: 0.9rem; }
+
+    /* ── Tabs ── */
+    .tabs-row {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 2.5rem; display: flex; gap: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--subtext); padding: 0.8rem 1.25rem;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Main / panels ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 2rem 2.5rem 0;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Search row ── */
+    .search-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .search-wrap { position: relative; flex: 1; max-width: 300px; }
+    .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .search-wrap input {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px 8px 34px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.875rem;
+      outline: none; transition: border-color .2s;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .row-count {
+      font-family: var(--font-mono);
+      font-size: 0.7rem; color: var(--subtext); margin-left: auto;
+    }
+
+    /* ── Tables ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--header-bg); }
+    th {
+      font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent2);
+      padding: 0.85rem 1rem; text-align: left;
+      cursor: pointer; user-select: none; white-space: nowrap;
+      transition: background .15s;
+    }
+    th:hover { background: rgba(59,158,255,0.1); }
+    th .si { margin-left: 4px; opacity: 0.35; font-style: normal; }
+    th.sort-asc .si, th.sort-desc .si { opacity: 1; color: var(--accent); }
+    tbody tr { border-top: 1px solid var(--border); transition: background .12s; }
+    tbody tr:hover { background: rgba(59,158,255,0.08); cursor: pointer; }
+    td { font-size: 0.875rem; padding: 0.75rem 1rem; color: var(--text); }
+    td:first-child { font-weight: 500; color: var(--accent2); }
+    .state-row td {
+      text-align: center; padding: 2.5rem; color: var(--subtext);
+      font-family: var(--font-mono); font-size: 0.78rem;
+    }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    tbody tr { animation: fadeUp .2s ease both; }
+
+    /* ── Match History ── */
+    .summary-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(115px,1fr));
+      gap: 10px; margin-bottom: 1.5rem;
+    }
+    .summary-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem;
+    }
+    .summary-card .lbl {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--subtext); margin-bottom: 6px;
+    }
+    .summary-card .val {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .match-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .filter-btn {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      color: var(--subtext); font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 5px 14px; cursor: pointer; transition: all .15s;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #060e1f; }
+    .result-won  { color: #4ddfff; font-weight: 600; }
+    .result-lost { color: #ff6b6b; font-weight: 600; }
+    .result-draw { color: #ffd166; font-weight: 600; }
+
+    .placeholder-banner {
+      background: var(--surface); border: 1px dashed var(--border);
+      border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;
+    }
+    .placeholder-banner p { color: var(--subtext); font-size: 0.875rem; line-height: 1.9; }
+    .placeholder-banner code {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 6px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    }
+
+    /* ── Charts section ── */
+    .charts-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 2.5rem 0; }
+    .charts-section {
+      position: relative; z-index: 1; max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+    .charts-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.75rem; }
+    .charts-header h3 {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .charts-header span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--subtext); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem;
+    }
+    .chart-card-title {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase; color: var(--subtext); margin-bottom: 1rem;
+    }
+    .chart-loading {
+      height: 220px; display: flex; align-items: center; justify-content: center;
+      color: var(--subtext); font-family: var(--font-mono); font-size: 0.75rem;
+    }
+
+    @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      header, .hero-band, .tabs-row, main, .charts-section { padding-left: 1rem; padding-right: 1rem; }
+      .charts-divider { margin-left: 1rem; margin-right: 1rem; }
+      .hero-band h2 { font-size: 2.2rem; }
+      td, th { padding: 0.6rem 0.65rem; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER — edit the team name and season badge here
+     ══════════════════════════════════════════════════════ -->
+<header>
+  <div class="header-logo">🏏</div>
+  <h1>Maine East <span>Cricket</span></h1>     <!-- ← change team name here -->
+  <div class="header-badge">2025–26 Season</div>  <!-- ← change season label here -->
+</header>
+
+<!-- ══════════════════════════════════════════════════════
+     HERO — the large heading at the top of the page
+     ══════════════════════════════════════════════════════ -->
+<div class="hero-band">
+  <h2>Club <em>Stats</em><br>at a Glance</h2>  <!-- ← edit the hero heading here -->
+  <p>Maine East Cricket Club · Live data from Google Sheets</p>  <!-- ← subtitle -->
+</div>
+
+<div class="tabs-row">
+  <button class="tab-btn active" data-tab="batting">🏏 Batting</button>
+  <button class="tab-btn" data-tab="bowling">⚡ Bowling</button>
+  <button class="tab-btn" data-tab="matches">📋 Match History</button>
+</div>
+
+<main>
+  <!-- BATTING -->
+  <div class="panel active" id="panel-batting">
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="batting-search" placeholder="Search player…">
+      </div>
+      <span class="row-count" id="batting-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="battingTable">
+        <thead></thead>
+        <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- BOWLING -->
+  <div class="panel" id="panel-bowling">
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="bowling-search" placeholder="Search player…">
+      </div>
+      <span class="row-count" id="bowling-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="bowlingTable">
+        <thead></thead>
+        <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MATCH HISTORY -->
+  <div class="panel" id="panel-matches">
+    <div id="match-summary-cards" class="summary-cards" style="display:none;"></div>
+    <div id="match-placeholder" class="placeholder-banner">
+      <p>
+        Match history is ready — just paste your CSV link in the JS config below.<br><br>
+        In Google Sheets: <strong>File → Share → Publish to web</strong><br>
+        Select your match history tab → choose <code>CSV</code> → copy the URL.<br><br>
+        Then replace <code>MATCH_HISTORY_CSV_URL</code> in the CONFIG block near the bottom of this file.
+      </p>
+    </div>
+    <div id="match-filters-row" class="match-filters" style="display:none;">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="Won">Won</button>
+      <button class="filter-btn" data-filter="Lost">Lost</button>
+      <button class="filter-btn" data-filter="Draw">Draw</button>
+    </div>
+    <div class="table-wrap" id="matchTableWrap" style="display:none;">
+      <table id="matchTable"><thead></thead><tbody></tbody></table>
+    </div>
+  </div>
+</main>
+
+<hr class="charts-divider">
+<section class="charts-section">
+  <div class="charts-header">
+    <h3>Performance Charts</h3>
+    <span>Drawn from live stats</span>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-title">Top Run-scorers</div>
+      <div id="wrap-runs" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Batting Average</div>
+      <div id="wrap-avg" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Bowling Wickets Leaderboard</div>
+      <div id="wrap-wkts" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">Bowling Economy Rate</div>
+      <div id="wrap-econ" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   CONFIG — the only section you need to edit regularly.
+   ══════════════════════════════════════════════════════════════
+
+   HOW TO GET A CSV LINK FROM GOOGLE SHEETS:
+   1. Open your spreadsheet
+   2. Go to File → Share → Publish to web
+   3. In the first dropdown, pick the specific sheet/tab you want
+   4. In the second dropdown, choose "Comma-separated values (.csv)"
+   5. Click Publish, then copy the URL shown
+   6. Paste it below in quotes, replacing the placeholder text
+
+   Each tab in your spreadsheet needs its own published CSV link.
+   ══════════════════════════════════════════════════════════════ */
+
+const BATTING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
+// ↑ Your batting sheet CSV — already set up
+
+const BOWLING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
+// ↑ Your bowling sheet CSV — already set up
+
+const MATCH_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1521760675&single=true&output=csv";
+// ↑ Paste your match history CSV link here (between the quotes)
+//   Replace the whole text MATCH_HISTORY_CSV_URL — keep the quotes.
+
+/* ══════════════════════════════════════════════════════════════
+   CHART COLOURS — change these hex values to adjust bar colours
+   ══════════════════════════════════════════════════════════════ */
+const COLOR_RUNS  = "#3b9eff";   /* Top run-scorers bar colour  */
+const COLOR_AVG   = "#7ec8ff";   /* Batting average bar colour  */
+const COLOR_WKTS  = "#4ddfff";   /* Wickets leaderboard colour  */
+const COLOR_ECON  = "#ffd166";   /* Economy rate bar colour     */
+const SUBTEXT_HEX = "#6a9fc8";   /* Axis label colour           */
+
+/* ══════════════════════════════════════════════════════════════
+   END OF CONFIG — no need to edit below this line unless you
+   want to change the site's behaviour or structure.
+   ══════════════════════════════════════════════════════════════ */
+
+// ── Tabs ──────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── CSV fetcher ───────────────────────────────────────────────
+async function fetchCSV(url) {
+  const text = await (await fetch(url)).text();
+  const rows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
+  return { headers: rows[0], rows: rows.slice(1).filter(r => r.some(c => c !== '')) };
+}
+
+// ── Stat tables ───────────────────────────────────────────────
+const sheets = {
+  batting: { csv: BATTING_CSV, tableId: 'battingTable', searchId: 'batting-search', countId: 'batting-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
+  bowling: { csv: BOWLING_CSV, tableId: 'bowlingTable', searchId: 'bowling-search', countId: 'bowling-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
+};
+
+function renderTable(key, query = '') {
+  const s = sheets[key];
+  const q = query.toLowerCase();
+  const filtered = q ? s.rows.filter(r => r.some(c => c.toLowerCase().includes(q))) : [...s.rows];
+  if (s.sortCol >= 0) {
+    filtered.sort((a, b) => {
+      const an = parseFloat(a[s.sortCol]), bn = parseFloat(b[s.sortCol]);
+      return (!isNaN(an) && !isNaN(bn)) ? (an - bn) * s.sortDir : a[s.sortCol].localeCompare(b[s.sortCol]) * s.sortDir;
+    });
+  }
+  document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
+  const tbody = document.getElementById(s.tableId).querySelector('tbody');
+  tbody.innerHTML = filtered.length
+    ? filtered.map((r, i) => `<tr style="animation-delay:${i*0.025}s">` + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('')
+    : '<tr class="state-row"><td>No players match your search.</td></tr>';
+}
+
+function buildStatTable(key) {
+  const s = sheets[key];
+  const thead = document.getElementById(s.tableId).querySelector('thead');
+  thead.innerHTML = '<tr>' + s.headers.map((h, i) =>
+    `<th data-col="${i}" data-key="${key}">${h}<em class="si">⇅</em></th>`
+  ).join('') + '</tr>';
+  thead.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = +th.dataset.col, k = th.dataset.key, sht = sheets[k];
+      sht.sortCol === col ? sht.sortDir *= -1 : (sht.sortCol = col, sht.sortDir = 1);
+      document.getElementById(sht.tableId).querySelectorAll('th').forEach(t => {
+        t.classList.remove('sort-asc','sort-desc');
+        t.querySelector('.si').textContent = '⇅';
+      });
+      th.classList.add(sht.sortDir === 1 ? 'sort-asc' : 'sort-desc');
+      th.querySelector('.si').textContent = sht.sortDir === 1 ? '↑' : '↓';
+      renderTable(k, document.getElementById(sht.searchId).value);
+    });
+  });
+}
+
+async function loadStatSheet(key) {
+  const s = sheets[key];
+  try {
+    const { headers, rows } = await fetchCSV(s.csv);
+    s.headers = headers; s.rows = rows;
+    buildStatTable(key); renderTable(key);
+    document.getElementById(s.searchId).addEventListener('input', e => renderTable(key, e.target.value));
+  } catch {
+    document.getElementById(s.tableId).querySelector('tbody').innerHTML =
+      '<tr class="state-row"><td>⚠ Could not load data.</td></tr>';
+  }
+}
+
+// ── Match History ─────────────────────────────────────────────
+let matchRows = [], matchHeaders = [], matchFilter = 'all';
+
+function renderMatches() {
+  const ri = matchHeaders.findIndex(h => h.toLowerCase() === 'result');
+  const filtered = matchFilter === 'all' ? matchRows
+    : matchRows.filter(r => (r[ri]||'').toLowerCase() === matchFilter.toLowerCase());
+  const tbody = document.getElementById('matchTable').querySelector('tbody');
+  tbody.innerHTML = filtered.length
+    ? filtered.map((r, i) =>
+        `<tr style="animation-delay:${i*0.025}s">` + r.map((c, ci) => {
+          if (ci !== ri) return `<td>${c}</td>`;
+          const cls = {won:'result-won',lost:'result-lost',draw:'result-draw'}[c.toLowerCase()] || '';
+          return `<td class="${cls}">${c}</td>`;
+        }).join('') + '</tr>').join('')
+    : '<tr class="state-row"><td>No matches for this filter.</td></tr>';
+
+  if (ri >= 0) {
+    const won  = matchRows.filter(r => (r[ri]||'').toLowerCase()==='won').length;
+    const lost = matchRows.filter(r => (r[ri]||'').toLowerCase()==='lost').length;
+    const draw = matchRows.filter(r => (r[ri]||'').toLowerCase()==='draw').length;
+    const p = matchRows.length;
+    const cards = document.getElementById('match-summary-cards');
+    cards.innerHTML = `
+      <div class="summary-card"><div class="lbl">Played</div><div class="val">${p}</div></div>
+      <div class="summary-card"><div class="lbl">Won</div><div class="val" style="color:#4ddfff">${won}</div></div>
+      <div class="summary-card"><div class="lbl">Lost</div><div class="val" style="color:#ff6b6b">${lost}</div></div>
+      <div class="summary-card"><div class="lbl">Draw</div><div class="val" style="color:#ffd166">${draw}</div></div>
+      <div class="summary-card"><div class="lbl">Win Rate</div><div class="val">${p ? Math.round(won/p*100) : 0}<span style="font-size:1.1rem">%</span></div></div>
+    `;
+    cards.style.display = 'grid';
+  }
+}
+
+async function loadMatches() {
+  if (MATCH_CSV === 'MATCH_HISTORY_CSV_URL') return;
+  document.getElementById('match-placeholder').style.display = 'none';
+  try {
+    const { headers, rows } = await fetchCSV(MATCH_CSV);
+    matchHeaders = headers; matchRows = rows;
+    const thead = document.getElementById('matchTable').querySelector('thead');
+    thead.innerHTML = '<tr>' + headers.map(h => `<th style="cursor:default">${h}</th>`).join('') + '</tr>';
+    document.getElementById('matchTableWrap').style.display = 'block';
+    document.getElementById('match-filters-row').style.display = 'flex';
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        matchFilter = btn.dataset.filter;
+        renderMatches();
+      });
+    });
+    renderMatches();
+  } catch {
+    document.getElementById('match-placeholder').innerHTML =
+      '<p>⚠ Could not load match history. Check your CSV URL.</p>';
+    document.getElementById('match-placeholder').style.display = 'block';
+  }
+}
+
+// ── Charts ────────────────────────────────────────────────────
+const baseTick = { color: SUBTEXT_HEX, font: { family: "'IBM Plex Mono'", size: 10 } };
+const baseGrid = { color: 'rgba(255,255,255,0.04)' };
+
+function findCol(headers, ...terms) {
+  for (const t of terms) {
+    const i = headers.findIndex(h => h.toLowerCase().includes(t.toLowerCase()));
+    if (i >= 0) return i;
+  }
+  return -1;
+}
+
+function hbar(wrapId, labels, data, color, unit) {
+  const wrap = document.getElementById(wrapId);
+  wrap.style.height = Math.max(220, labels.length * 40 + 60) + 'px';
+  wrap.innerHTML = '<canvas></canvas>';
+  new Chart(wrap.querySelector('canvas'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 4, barThickness: 16 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x + (unit ? ' ' + unit : '') } }
+      },
+      scales: {
+        x: { beginAtZero: true, ticks: baseTick, grid: baseGrid },
+        y: { ticks: { ...baseTick, autoSkip: false }, grid: baseGrid }
+      }
+    }
+  });
+}
+
+function buildCharts(bH, bR, wH, wR) {
+  const TOP = 8;
+  const nb = findCol(bH,'name','player','batter');
+  const rc = findCol(bH,'runs','total run');
+  const ac = findCol(bH,'avg','average');
+  const nw = findCol(wH,'name','player','bowler');
+  const wc = findCol(wH,'wicket','wkts','wkt');
+  const ec = findCol(wH,'econ','economy');
+
+  if (nb>=0 && rc>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP); hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs'); }
+  else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found in sheet</div>';
+
+  if (nb>=0 && ac>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[ac]||0)-parseFloat(a[ac]||0)).slice(0,TOP); hbar('wrap-avg',s.map(r=>r[nb]),s.map(r=>parseFloat(r[ac]||0)),COLOR_AVG,'avg'); }
+  else document.getElementById('wrap-avg').innerHTML='<div class="chart-loading">Column "Average" not found in sheet</div>';
+
+  if (nw>=0 && wc>=0) { const s=[...wR].sort((a,b)=>parseFloat(b[wc]||0)-parseFloat(a[wc]||0)).slice(0,TOP); hbar('wrap-wkts',s.map(r=>r[nw]),s.map(r=>parseFloat(r[wc]||0)),COLOR_WKTS,'wkts'); }
+  else document.getElementById('wrap-wkts').innerHTML='<div class="chart-loading">Column "Wickets" not found in sheet</div>';
+
+  if (nw>=0 && ec>=0) { const s=[...wR].filter(r=>parseFloat(r[ec])>0).sort((a,b)=>parseFloat(a[ec])-parseFloat(b[ec])).slice(0,TOP); hbar('wrap-econ',s.map(r=>r[nw]),s.map(r=>parseFloat(r[ec]||0)),COLOR_ECON,'per over'); }
+  else document.getElementById('wrap-econ').innerHTML='<div class="chart-loading">Column "Economy" not found in sheet</div>';
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+async function init() {
+  await Promise.all([loadStatSheet('batting'), loadStatSheet('bowling')]);
+  loadMatches();
+  buildCharts(sheets.batting.headers, sheets.batting.rows, sheets.bowling.headers, sheets.bowling.rows);
+}
+init();
+</script>
 </body>
 </html>
-
-
