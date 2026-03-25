@@ -626,14 +626,13 @@ function hbar(wrapId, labels, data, color, unit) {
 
 function buildCharts(bH, bR, wH, wR) {
   const TOP = 8;
-  // Match your exact spreadsheet column names
   const nb = findCol(bH, 'Player');
   const rc = findCol(bH, 'Runs'); 
-  const ac = findCol(bH, 'Ave');
+  const ac = findCol(bH, 'Ave'); // Matches your 'Ave' column
   
   const nw = findCol(wH, 'Player');
   const wc = findCol(wH, 'Wickets');
-  const ec = findCol(wH, 'Economy');
+  const ec = findCol(wH, 'Economy'); // Matches your 'Economy' column
 
   if (nb>=0 && rc>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP); hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs'); }
   else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found in sheet</div>';
