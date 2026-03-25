@@ -65,30 +65,17 @@ h1, h2, h3, .vs-player-name {
   text-transform: uppercase;
 }
 
-/* Winner Highlighting Styles */
-.vs-cell.win-left, .vs-cell.win-right {
-  background-color: var(--win-bg);
-  color: var(--win-text);
-  font-weight: 700;
-  border-radius: 4px;
-}
+/* ══════════════════════════════════════════════════════════════
+   VS MODE & HIGHLIGHTING
+   ══════════════════════════════════════════════════════════════ */
 
-.vs-cell.elite-val {
-  background-color: var(--elite-bg);
-  color: var(--elite-text);
-  position: relative;
-}
-
-.vs-cell.elite-val::after {
-  content: ' 🔥';
-}
-
-/* Ensure the VS Grid looks clean in Light Mode */
+/* The Stat Rows */
 .vs-stat-row {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border);
+  justify-content: space-between;
   padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
 
 .vs-cell {
@@ -96,15 +83,37 @@ h1, h2, h3, .vs-player-name {
   text-align: center;
   padding: 8px;
   font-size: 1.1rem;
+  font-family: var(--font-mono); /* Keeps numbers aligned */
+  transition: all 0.2s ease;
 }
 
 .vs-cell-label {
-  width: 100px;
+  flex: 0 0 100px;
   text-align: center;
   font-size: 0.85rem;
   color: var(--subtext);
   text-transform: uppercase;
   font-weight: 600;
+}
+
+/* THE WINNER: Using solid blue for high contrast */
+.vs-cell.win-highlight {
+  background-color: var(--accent) !important;
+  color: #ffffff !important; 
+  font-weight: 700;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* THE ELITE: Adding the Fire */
+.vs-cell.elite-val::after {
+  content: ' 🔥';
+  font-size: 0.9rem;
+}
+
+/* Elite + Winner combo: subtle glow */
+.vs-cell.elite-val.win-highlight {
+  box-shadow: 0 0 12px rgba(255, 165, 0, 0.3);
 }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -905,12 +914,13 @@ const VS_BOWLING_COLS = [
    FEATURE 3 — ELITE THRESHOLDS
    ══════════════════════════════════════════════════════════════ */
 function isElite(key, value) {
-  const v = parseFloat(value);
-  if (isNaN(v)) return false;
-  if (key === 'S/R'     && v > 100)  return true;
-  if (key === 'Ave'     && v > 20)   return true;
-  if (key === 'Economy' && v > 0 && v < 6.0) return true;
-  if (key === 'Wickets' && v > 2)    return true;
+  const val = parseFloat(value);
+  if (isNaN(val)) return false;
+  
+  if (key === 'S/R' && val > 100) return true;
+  if (key === 'Ave' && val > 30) return true;
+  if (key === 'Economy' && val > 0 && val < 6.0) return true;
+  if (key === 'Wickets' && val >= 3) return true;
   return false;
 }
 
@@ -1326,6 +1336,7 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
 /* ══════════════════════════════════════════════════════════════
    FEATURE 1 — VS MODE
    ══════════════════════════════════════════════════════════════ */
+
 function vsWinner(lv, rv, higherWins) {
   const l = parseFloat(lv), r = parseFloat(rv);
   if (isNaN(l) || isNaN(r) || l === r) return 'tie';
@@ -1344,21 +1355,27 @@ function buildVsSection(emojiTitle, cols, leftStats, rightStats) {
 
     const winner = vsWinner(lv, rv, col.higherWins);
     
-    // Apply highlighting classes
-    const lClass = (winner === 'left') ? 'win-left' : '';
-    const rClass = (winner === 'right') ? 'win-right' : '';
+    // Check for Elite status (Fire emoji)
+    const lElite = isElite(col.key, lv) ? 'elite-val' : '';
+    const rElite = isElite(col.key, rv) ? 'elite-val' : '';
+
+    // Check for Winner status (Background highlight)
+    const lWin = (winner === 'left') ? 'win-highlight' : '';
+    const rWin = (winner === 'right') ? 'win-highlight' : '';
 
     return `
       <div class="vs-stat-row">
-        <div class="vs-cell ${lClass}">${lv}</div>
+        <div class="vs-cell left ${lWin} ${lElite}">${lv}</div>
         <div class="vs-cell-label">${col.label}</div>
-        <div class="vs-cell ${rClass}">${rv}</div>
+        <div class="vs-cell right ${rWin} ${rElite}">${rv}</div>
       </div>`;
   }).join('');
 
   return `
     <div class="vs-stat-section">
-      <h3 style="text-align:center; margin: 20px 0;">${emojiTitle}</h3>
+      <div class="vs-section-title" style="text-align:center; font-family:var(--font-display); margin: 20px 0; color:var(--accent); font-size:1.5rem;">
+        ${emojiTitle}
+      </div>
       ${rowsHtml}
     </div>`;
 }
@@ -1477,6 +1494,33 @@ async function init() {
   buildCharts(sheets.batting.headers, sheets.batting.rows, sheets.bowling.headers, sheets.bowling.rows);
 }
 init();
+
+/* ══════════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════════ */
+const toggleBtn = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+
+// Check for saved user preference
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light-mode');
+  themeIcon.innerText = '☀️';
+}
+
+toggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+  
+  const isLight = document.body.classList.contains('light-mode');
+  themeIcon.innerText = isLight ? '☀️' : '🌙';
+  
+  // Save preference
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  
+  // Refresh charts if they exist to match new colors
+  if (typeof updateChartsColor === "function") updateChartsColor();
+});
+  
+
 </script>
 </body>
 </html>
