@@ -361,8 +361,8 @@
       <div id="wrap-runs" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
     </div>
     <div class="chart-card">
-      <div class="chart-card-title">Batting Average</div>
-      <div id="wrap-avg" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      <div class="chart-card-title">Strike Rate</div>
+      <div id="wrap-sr" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
     </div>
     <div class="chart-card">
       <div class="chart-card-title">Bowling Wickets Leaderboard</div>
@@ -406,7 +406,7 @@ const MATCH_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU
    CHART COLOURS — change these hex values to adjust bar colours
    ══════════════════════════════════════════════════════════════ */
 const COLOR_RUNS  = "#3b9eff";   /* Top run-scorers bar colour  */
-const COLOR_AVG   = "#7ec8ff";   /* Batting average bar colour  */
+const COLOR_SR   = "#7ec8ff";   /* S/R bar colour  */
 const COLOR_WKTS  = "#4ddfff";   /* Wickets leaderboard colour  */
 const COLOR_ECON  = "#ffd166";   /* Economy rate bar colour     */
 const SUBTEXT_HEX = "#6a9fc8";   /* Axis label colour           */
@@ -629,8 +629,8 @@ function buildCharts(bH, bR, wH, wR) {
   if (nb>=0 && rc>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP); hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs'); }
   else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found in sheet</div>';
 
-  if (nb>=0 && ac>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[ac]||0)-parseFloat(a[ac]||0)).slice(0,TOP); hbar('wrap-avg',s.map(r=>r[nb]),s.map(r=>parseFloat(r[ac]||0)),COLOR_AVG,'avg'); }
-  else document.getElementById('wrap-avg').innerHTML='<div class="chart-loading">Column "Average" not found in sheet</div>';
+  if (nb>=0 && ac>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[ac]||0)-parseFloat(a[ac]||0)).slice(0,TOP); hbar('wrap-sr',s.map(r=>r[nb]),s.map(r=>parseFloat(r[ac]||0)),COLOR_SR,'S/R'); }
+  else document.getElementById('wrap-sr').innerHTML='<div class="chart-loading">Column "Average" not found in sheet</div>';
 
   if (nw>=0 && wc>=0) { const s=[...wR].sort((a,b)=>parseFloat(b[wc]||0)-parseFloat(a[wc]||0)).slice(0,TOP); hbar('wrap-wkts',s.map(r=>r[nw]),s.map(r=>parseFloat(r[wc]||0)),COLOR_WKTS,'wkts'); }
   else document.getElementById('wrap-wkts').innerHTML='<div class="chart-loading">Column "Wickets" not found in sheet</div>';
