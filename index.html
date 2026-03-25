@@ -429,8 +429,19 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ── CSV fetcher ───────────────────────────────────────────────
 async function fetchCSV(url) {
   const text = await (await fetch(url)).text();
-  const rows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
-  return { headers: rows[0], rows: rows.slice(1).filter(r => r.some(c => c !== '')) };
+  const allRows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
+  
+  // Find the row that actually contains our headers
+  const headerIndex = allRows.findIndex(row => 
+    row.some(cell => ['player', 'date'].includes(cell.toLowerCase()))
+  );
+
+  if (headerIndex === -1) return { headers: [], rows: [] };
+
+  return { 
+    headers: allRows[headerIndex], 
+    rows: allRows.slice(headerIndex + 1).filter(r => r.length > 1 && r[0] !== '') 
+  };
 }
 
 // ── Stat tables ───────────────────────────────────────────────
@@ -585,12 +596,14 @@ function hbar(wrapId, labels, data, color, unit) {
 
 function buildCharts(bH, bR, wH, wR) {
   const TOP = 8;
-  const nb = findCol(bH,'name','player','batter');
-  const rc = findCol(bH,'runs','total run');
-  const ac = findCol(bH,'avg','average');
-  const nw = findCol(wH,'name','player','bowler');
-  const wc = findCol(wH,'wicket','wkts','wkt');
-  const ec = findCol(wH,'econ','economy');
+  // Match your exact spreadsheet column names
+  const nb = findCol(bH, 'Player');
+  const rc = findCol(bH, 'Runs'); 
+  const ac = findCol(bH, 'Ave');
+  
+  const nw = findCol(wH, 'Player');
+  const wc = findCol(wH, 'Wickets');
+  const ec = findCol(wH, 'Economy');
 
   if (nb>=0 && rc>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP); hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs'); }
   else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found in sheet</div>';
