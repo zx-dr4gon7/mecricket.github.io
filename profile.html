@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maine East Cricket</title>
+  <link rel="icon" type="image/png" href="logo.png?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #060e1f;
+      --surface:   #0d1e3a;
+      --border:    #1a3260;
+      --header-bg: #0a2050;
+      --accent:    #3b9eff;
+      --accent2:   #7ec8ff;
+      --muted:     #2a5080;
+      --text:      #e8f2ff;
+      --subtext:   #6a9fc8;
+      --font-display: 'Oswald', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'IBM Plex Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(59,158,255,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      height: 68px;
+      background: rgba(6,14,31,0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 2.5rem; gap: 1rem;
+    }
+    .header-logo {
+      width: 36px; height: 36px;
+      background: var(--accent); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    header h1 {
+      font-family: var(--font-display);
+      font-size: 1.25rem; letter-spacing: 0.04em;
+      text-transform: uppercase; color: var(--text);
+    }
+    header h1 span { color: var(--accent); }
+    .header-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.68rem; color: var(--subtext);
+      border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 20px;
+    }
+
+    /* ── Hero ── */
+    .hero-band {
+      position: relative; z-index: 1;
+      padding: 3rem 2.5rem 2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .hero-band h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 700; line-height: 1.0;
+      letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .hero-band h2 em { font-style: normal; color: var(--accent); }
+    .hero-band p { margin-top: 0.75rem; color: var(--subtext); font-size: 0.9rem; }
+
+    /* ── Tabs ── */
+    .tabs-row {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 2.5rem; display: flex; gap: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--subtext); padding: 0.8rem 1.25rem;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s; margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── Main / panels ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 2rem 2.5rem 0;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Search row ── */
+    .search-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .search-wrap { position: relative; flex: 1; max-width: 300px; }
+    .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .search-wrap input {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px 8px 34px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.875rem;
+      outline: none; transition: border-color .2s;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .row-count {
+      font-family: var(--font-mono);
+      font-size: 0.7rem; color: var(--subtext); margin-left: auto;
+    }
+
+    /* ── Tables ── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--header-bg); }
+    th {
+      font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent2);
+      padding: 0.85rem 1rem; text-align: left;
+      cursor: pointer; user-select: none; white-space: nowrap;
+      transition: background .15s;
+    }
+    th:hover { background: rgba(59,158,255,0.1); }
+    th .si { margin-left: 4px; opacity: 0.35; font-style: normal; }
+    th.sort-asc .si, th.sort-desc .si { opacity: 1; color: var(--accent); }
+    tbody tr { border-top: 1px solid var(--border); transition: background .12s; }
+    tbody tr:hover { background: rgba(59,158,255,0.08); cursor: pointer; }
+    td { font-size: 0.875rem; padding: 0.75rem 1rem; color: var(--text); }
+    td:first-child { font-weight: 500; color: var(--accent2); }
+    .state-row td {
+      text-align: center; padding: 2.5rem; color: var(--subtext);
+      font-family: var(--font-mono); font-size: 0.78rem;
+    }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    tbody tr { animation: fadeUp .2s ease both; }
+
+    /* ── Match History ── */
+    .summary-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(115px,1fr));
+      gap: 10px; margin-bottom: 1.5rem;
+    }
+    .summary-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem;
+    }
+    .summary-card .lbl {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--subtext); margin-bottom: 6px;
+    }
+    .summary-card .val {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .match-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .filter-btn {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      color: var(--subtext); font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 5px 14px; cursor: pointer; transition: all .15s;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #060e1f; }
+    .result-won  { color: #4ddfff; font-weight: 600; }
+    .result-lost { color: #ff6b6b; font-weight: 600; }
+    .result-draw { color: #ffd166; font-weight: 600; }
+
+    .placeholder-banner {
+      background: var(--surface); border: 1px dashed var(--border);
+      border-radius: 12px; padding: 2rem; text-align: center; margin-bottom: 1.5rem;
+    }
+    .placeholder-banner p { color: var(--subtext); font-size: 0.875rem; line-height: 1.9; }
+    .placeholder-banner code {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 6px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    }
+
+    /* ── Charts section ── */
+    .charts-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 2.5rem 0; }
+    .charts-section {
+      position: relative; z-index: 1; max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+    .charts-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.75rem; }
+    .charts-header h3 {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .charts-header span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--subtext); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .chart-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.25rem;
+    }
+    .chart-card-title {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.09em; text-transform: uppercase; color: var(--subtext); margin-bottom: 1rem;
+    }
+    .chart-loading {
+      height: 220px; display: flex; align-items: center; justify-content: center;
+      color: var(--subtext); font-family: var(--font-mono); font-size: 0.75rem;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       PLAYER PROFILE VIEW
+       ════════════════════════════════════════════════════════════ */
+    #profile-view {
+      display: none;
+      position: relative; z-index: 1;
+      animation: profileIn .35s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes profileIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    #profile-view.active { display: block; }
+
+    /* Back button */
+    .profile-back-row {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem 2.5rem 0;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 16px;
+      color: var(--subtext); font-family: var(--font-mono);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: all .18s;
+    }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(59,158,255,0.07); }
+    .back-btn svg { transition: transform .18s; }
+    .back-btn:hover svg { transform: translateX(-3px); }
+
+    /* Profile card */
+    .profile-card {
+      max-width: 1100px; margin: 1.5rem auto 0;
+      padding: 0 2.5rem 3rem;
+    }
+
+    /* Hero strip */
+    .profile-hero {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 2rem 2rem 1.75rem;
+      margin-bottom: 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    /* Decorative glow behind the hero */
+    .profile-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(59,158,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .profile-hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, transparent 70%);
+    }
+
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+      color: var(--text); line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .profile-name span { color: var(--accent); }
+
+    .profile-meta {
+      font-family: var(--font-mono); font-size: 0.68rem; color: var(--subtext);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.75rem;
+    }
+
+    /* Hero stats row */
+    .profile-hero-stats {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+    }
+    .hero-stat {
+      background: rgba(59,158,255,0.08); border: 1px solid rgba(59,158,255,0.2);
+      border-radius: 10px; padding: 1rem 1.5rem;
+      min-width: 110px; flex: 1;
+    }
+    .hero-stat .hs-lbl {
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtext);
+      margin-bottom: 6px;
+    }
+    .hero-stat .hs-val {
+      font-family: var(--font-display); font-size: 2.2rem; font-weight: 700;
+      color: var(--accent); line-height: 1;
+    }
+    .hero-stat .hs-val.secondary { color: var(--accent2); }
+    .hero-stat .hs-val.dim { color: var(--subtext); font-size: 1.5rem; }
+
+    /* Two-column grid for batting/bowling tables */
+    .profile-tables-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 700px) {
+      .profile-tables-grid { grid-template-columns: 1fr; }
+    }
+
+    .profile-stat-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden;
+    }
+    .profile-stat-block-title {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2);
+      padding: 0.9rem 1rem; background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.65rem 1rem; border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .profile-stat-row:last-child { border-bottom: none; }
+    .profile-stat-row:hover { background: rgba(59,158,255,0.06); }
+    .profile-stat-key {
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtext);
+      letter-spacing: 0.07em; text-transform: uppercase;
+    }
+    .profile-stat-val {
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 600;
+      color: var(--text);
+    }
+    .profile-no-data {
+      padding: 1.5rem 1rem; text-align: center;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      header, .hero-band, .tabs-row, main, .charts-section,
+      .profile-back-row, .profile-card { padding-left: 1rem; padding-right: 1rem; }
+      .charts-divider { margin-left: 1rem; margin-right: 1rem; }
+      .hero-band h2 { font-size: 2.2rem; }
+      td, th { padding: 0.6rem 0.65rem; font-size: 0.8rem; }
+      .profile-hero { padding: 1.25rem; }
+      .hero-stat { min-width: 80px; padding: 0.75rem 1rem; }
+      .hero-stat .hs-val { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+    <div class="header-logo" style="overflow: hidden; background: none;">
+      <img src="logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='🏏'">
+    </div>
+    <h1>‎ | Maine East <span>Cricket</span></h1>
+  </a>
+  <div class="header-badge">2025–26 Season</div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     PLAYER PROFILE VIEW (hidden until row click)
+     ══════════════════════════════════════════════ -->
+<div id="profile-view">
+  <div class="profile-back-row">
+    <button class="back-btn" id="back-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Back to Stats
+    </button>
+  </div>
+
+  <div class="profile-card">
+    <!-- Hero strip -->
+    <div class="profile-hero">
+      <div class="profile-name" id="profile-name">Player Name</div>
+      <div class="profile-meta" id="profile-meta">Maine East Cricket Club</div>
+      <div class="profile-hero-stats" id="profile-hero-stats"></div>
+    </div>
+
+    <!-- Two-column stat tables -->
+    <div class="profile-tables-grid">
+      <div class="profile-stat-block" id="profile-batting-block">
+        <div class="profile-stat-block-title">🏏 Batting</div>
+        <div id="profile-batting-rows"><div class="profile-no-data">No batting data</div></div>
+      </div>
+      <div class="profile-stat-block" id="profile-bowling-block">
+        <div class="profile-stat-block-title">⚡ Bowling</div>
+        <div id="profile-bowling-rows"><div class="profile-no-data">No bowling data</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD (shown by default)
+     ══════════════════════════════════════════════ -->
+<div id="dashboard-view">
+  <div class="hero-band">
+    <h2>Club <em>Stats</em><br>at a Glance</h2>
+    <p>Maine East Cricket Club</p>
+  </div>
+
+  <div class="tabs-row">
+    <button class="tab-btn active" data-tab="batting">🏏 Batting</button>
+    <button class="tab-btn" data-tab="bowling">⚡ Bowling</button>
+    <button class="tab-btn" data-tab="matches">📋 Match History</button>
+  </div>
+
+  <main>
+    <!-- BATTING -->
+    <div class="panel active" id="panel-batting">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="batting-search" placeholder="Search player…">
+        </div>
+        <span class="row-count" id="batting-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="battingTable">
+          <thead></thead>
+          <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BOWLING -->
+    <div class="panel" id="panel-bowling">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="bowling-search" placeholder="Search player…">
+        </div>
+        <span class="row-count" id="bowling-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="bowlingTable">
+          <thead></thead>
+          <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATCH HISTORY -->
+    <div class="panel" id="panel-matches">
+      <div id="match-summary-cards" class="summary-cards" style="display:none;"></div>
+      <div id="match-placeholder" class="placeholder-banner">
+        <p>
+          Match history is ready — just paste your CSV link in the JS config below.<br><br>
+          In Google Sheets: <strong>File → Share → Publish to web</strong><br>
+          Select your match history tab → choose <code>CSV</code> → copy the URL.<br><br>
+          Then replace <code>MATCH_HISTORY_CSV_URL</code> in the CONFIG block near the bottom of this file.
+        </p>
+      </div>
+      <div id="match-filters-row" class="match-filters" style="display:none;">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Won">Won</button>
+        <button class="filter-btn" data-filter="Lost">Lost</button>
+        <button class="filter-btn" data-filter="Draw">Draw</button>
+      </div>
+      <div class="table-wrap" id="matchTableWrap" style="display:none;">
+        <table id="matchTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </main>
+
+  <hr class="charts-divider">
+  <section class="charts-section">
+    <div class="charts-header">
+      <h3>Performance Charts</h3>
+      <span>Drawn from live stats</span>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Top Run-scorers</div>
+        <div id="wrap-runs" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Strike Rate</div>
+        <div id="wrap-sr" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Bowling Wickets Leaderboard</div>
+        <div id="wrap-wkts" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Bowling Economy Rate</div>
+        <div id="wrap-econ" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+    </div>
+  </section>
+</div><!-- end #dashboard-view -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   CONFIG
+   ══════════════════════════════════════════════════════════════ */
+const BATTING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
+const BOWLING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
+const MATCH_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1521760675&single=true&output=csv";
+
+/* ── Chart colours ── */
+const COLOR_RUNS  = "#3b9eff";
+const COLOR_SR    = "#7ec8ff";
+const COLOR_WKTS  = "#4ddfff";
+const COLOR_ECON  = "#ffd166";
+const SUBTEXT_HEX = "#6a9fc8";
+
+/* ══════════════════════════════════════════════════════════════
+   PROFILE — Hero stat config
+   Which columns to highlight prominently in the profile hero strip.
+   Each entry: { key: 'Column Header', label: 'Display Label', sheet: 'batting'|'bowling'|'both' }
+   ══════════════════════════════════════════════════════════════ */
+const HERO_STATS = [
+  { key: 'Runs',     label: 'Runs',     sheet: 'batting' },
+  { key: 'Ave',      label: 'Average',  sheet: 'batting' },
+  { key: 'S/R',      label: 'S / R',    sheet: 'batting' },
+  { key: 'Wickets',  label: 'Wickets',  sheet: 'bowling' },
+  { key: 'Economy',  label: 'Economy',  sheet: 'bowling' },
+];
+
+/* ══════════════════════════════════════════════════════════════
+   CSV FETCHER
+   ══════════════════════════════════════════════════════════════ */
+async function fetchCSV(url) {
+  try {
+    const resp = await fetch(url);
+    const text = await resp.text();
+    const allRows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
+
+    let headerIndex = allRows.findIndex(row =>
+      row.some(cell => ['player', 'date'].includes(cell.toLowerCase()))
+    );
+    if (headerIndex === -1) return { headers: [], rows: [] };
+
+    const headers = allRows[headerIndex];
+    const firstColIndex = headers.findIndex(h => ['player', 'date'].includes(h.toLowerCase()));
+    const finalHeaders = headers.slice(firstColIndex);
+    const finalRows = allRows.slice(headerIndex + 1)
+      .map(row => row.slice(firstColIndex))
+      .filter(r => r.length > 0 && r[0] !== '' && r[0] !== undefined);
+
+    return { headers: finalHeaders, rows: finalRows };
+  } catch (e) {
+    console.error('CSV Fetch Error:', e);
+    return { headers: [], rows: [] };
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STAT TABLES
+   ══════════════════════════════════════════════════════════════ */
+const sheets = {
+  batting: { csv: BATTING_CSV, tableId: 'battingTable', searchId: 'batting-search', countId: 'batting-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
+  bowling: { csv: BOWLING_CSV, tableId: 'bowlingTable', searchId: 'bowling-search', countId: 'bowling-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
+};
+
+function renderTable(key, query = '') {
+  const s = sheets[key];
+  const q = query.toLowerCase();
+  const filtered = q ? s.rows.filter(r => r.some(c => c.toLowerCase().includes(q))) : [...s.rows];
+  if (s.sortCol >= 0) {
+    filtered.sort((a, b) => {
+      const an = parseFloat(a[s.sortCol]), bn = parseFloat(b[s.sortCol]);
+      return (!isNaN(an) && !isNaN(bn)) ? (an - bn) * s.sortDir : a[s.sortCol].localeCompare(b[s.sortCol]) * s.sortDir;
+    });
+  }
+  document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
+  const tbody = document.getElementById(s.tableId).querySelector('tbody');
+  tbody.innerHTML = filtered.length
+    ? filtered.map((r, i) =>
+        `<tr data-player="${r[0]}" data-source="${key}" style="animation-delay:${i*0.025}s">` +
+        r.map(c => `<td>${c}</td>`).join('') + '</tr>'
+      ).join('')
+    : '<tr class="state-row"><td>No players match your search.</td></tr>';
+
+  // Attach click listeners for profile navigation
+  tbody.querySelectorAll('tr[data-player]').forEach(tr => {
+    tr.addEventListener('click', () => openProfile(tr.dataset.player));
+  });
+}
+
+function buildStatTable(key) {
+  const s = sheets[key];
+  const thead = document.getElementById(s.tableId).querySelector('thead');
+  thead.innerHTML = '<tr>' + s.headers.map((h, i) =>
+    `<th data-col="${i}" data-key="${key}">${h}<em class="si">⇅</em></th>`
+  ).join('') + '</tr>';
+  thead.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = +th.dataset.col, k = th.dataset.key, sht = sheets[k];
+      sht.sortCol === col ? sht.sortDir *= -1 : (sht.sortCol = col, sht.sortDir = 1);
+      document.getElementById(sht.tableId).querySelectorAll('th').forEach(t => {
+        t.classList.remove('sort-asc', 'sort-desc');
+        t.querySelector('.si').textContent = '⇅';
+      });
+      th.classList.add(sht.sortDir === 1 ? 'sort-asc' : 'sort-desc');
+      th.querySelector('.si').textContent = sht.sortDir === 1 ? '↑' : '↓';
+      renderTable(k, document.getElementById(sht.searchId).value);
+    });
+  });
+}
+
+async function loadStatSheet(key) {
+  const s = sheets[key];
+  try {
+    const { headers, rows } = await fetchCSV(s.csv);
+    s.headers = headers; s.rows = rows;
+    buildStatTable(key); renderTable(key);
+    document.getElementById(s.searchId).addEventListener('input', e => renderTable(key, e.target.value));
+  } catch {
+    document.getElementById(s.tableId).querySelector('tbody').innerHTML =
+      '<tr class="state-row"><td>⚠ Could not load data.</td></tr>';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PLAYER PROFILE
+   ══════════════════════════════════════════════════════════════ */
+
+/**
+ * Find a player's data row from a sheet by name (case-insensitive, trimmed).
+ * Returns the row array or null.
+ */
+function findPlayerRow(sheetKey, playerName) {
+  const s = sheets[sheetKey];
+  const pIdx = s.headers.findIndex(h => h.toLowerCase() === 'player');
+  if (pIdx < 0) return null;
+  return s.rows.find(r => (r[pIdx] || '').toLowerCase() === playerName.toLowerCase()) || null;
+}
+
+/**
+ * Build the key→value map for a player from a given sheet.
+ * Returns an object { Header: value, … } or null if player not found.
+ */
+function buildPlayerStats(sheetKey, playerName) {
+  const row = findPlayerRow(sheetKey, playerName);
+  if (!row) return null;
+  const s = sheets[sheetKey];
+  const map = {};
+  s.headers.forEach((h, i) => { map[h] = row[i] || '—'; });
+  return map;
+}
+
+/** Open the profile view for a given player name */
+function openProfile(playerName) {
+  const battingStats = buildPlayerStats('batting', playerName);
+  const bowlingStats = buildPlayerStats('bowling', playerName);
+
+  // ── Name & meta ──────────────────────────────────────────
+  const nameParts = playerName.trim().split(' ');
+  const lastName  = nameParts.pop();
+  const firstName = nameParts.join(' ');
+  document.getElementById('profile-name').innerHTML =
+    firstName ? `${firstName} <span>${lastName}</span>` : `<span>${lastName}</span>`;
+
+  const roles = [];
+  if (battingStats) roles.push('Batter');
+  if (bowlingStats) roles.push('Bowler');
+  document.getElementById('profile-meta').textContent =
+    roles.join(' · ') + ' · Maine East Cricket Club';
+
+  // ── Hero stats strip ──────────────────────────────────────
+  const heroWrap = document.getElementById('profile-hero-stats');
+  heroWrap.innerHTML = '';
+  HERO_STATS.forEach(cfg => {
+    const src = cfg.sheet === 'bowling' ? bowlingStats : battingStats;
+    if (!src) return;
+    const val = src[cfg.key];
+    if (!val || val === '—') return;
+    const div = document.createElement('div');
+    div.className = 'hero-stat';
+    div.innerHTML = `<div class="hs-lbl">${cfg.label}</div><div class="hs-val">${val}</div>`;
+    heroWrap.appendChild(div);
+  });
+  if (heroWrap.children.length === 0) {
+    heroWrap.innerHTML = '<div class="hero-stat"><div class="hs-lbl">Club Member</div><div class="hs-val dim">—</div></div>';
+  }
+
+  // ── Batting table ─────────────────────────────────────────
+  const batRows = document.getElementById('profile-batting-rows');
+  if (battingStats) {
+    const skip = ['player'];
+    batRows.innerHTML = Object.entries(battingStats)
+      .filter(([k]) => !skip.includes(k.toLowerCase()))
+      .map(([k, v]) =>
+        `<div class="profile-stat-row">
+          <span class="profile-stat-key">${k}</span>
+          <span class="profile-stat-val">${v}</span>
+        </div>`
+      ).join('');
+  } else {
+    batRows.innerHTML = '<div class="profile-no-data">No batting data found</div>';
+  }
+
+  // ── Bowling table ─────────────────────────────────────────
+  const bowlRows = document.getElementById('profile-bowling-rows');
+  if (bowlingStats) {
+    const skip = ['player'];
+    bowlRows.innerHTML = Object.entries(bowlingStats)
+      .filter(([k]) => !skip.includes(k.toLowerCase()))
+      .map(([k, v]) =>
+        `<div class="profile-stat-row">
+          <span class="profile-stat-key">${k}</span>
+          <span class="profile-stat-val">${v}</span>
+        </div>`
+      ).join('');
+  } else {
+    bowlRows.innerHTML = '<div class="profile-no-data">No bowling data found</div>';
+  }
+
+  // ── Show profile, hide dashboard ──────────────────────────
+  document.getElementById('dashboard-view').style.display = 'none';
+  const pv = document.getElementById('profile-view');
+  pv.style.display = 'block';
+  pv.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/** Return to the main dashboard */
+function closeProfile() {
+  document.getElementById('profile-view').style.display = 'none';
+  document.getElementById('profile-view').classList.remove('active');
+  document.getElementById('dashboard-view').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('back-btn').addEventListener('click', closeProfile);
+
+/* ══════════════════════════════════════════════════════════════
+   TABS
+   ══════════════════════════════════════════════════════════════ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ══════════════════════════════════════════════════════════════
+   MATCH HISTORY
+   ══════════════════════════════════════════════════════════════ */
+let matchRows = [], matchHeaders = [], matchFilter = 'all';
+
+function renderMatches() {
+  const ri = matchHeaders.findIndex(h => h.toLowerCase() === 'result');
+  const filtered = matchFilter === 'all' ? matchRows
+    : matchRows.filter(r => (r[ri] || '').toLowerCase() === matchFilter.toLowerCase());
+  const tbody = document.getElementById('matchTable').querySelector('tbody');
+  tbody.innerHTML = filtered.length
+    ? filtered.map((r, i) =>
+        `<tr style="animation-delay:${i*0.025}s">` + r.map((c, ci) => {
+          if (ci !== ri) return `<td>${c}</td>`;
+          const cls = { won: 'result-won', lost: 'result-lost', draw: 'result-draw' }[c.toLowerCase()] || '';
+          return `<td class="${cls}">${c}</td>`;
+        }).join('') + '</tr>').join('')
+    : '<tr class="state-row"><td>No matches for this filter.</td></tr>';
+
+  if (ri >= 0) {
+    const won  = matchRows.filter(r => (r[ri] || '').toLowerCase() === 'won').length;
+    const lost = matchRows.filter(r => (r[ri] || '').toLowerCase() === 'lost').length;
+    const draw = matchRows.filter(r => (r[ri] || '').toLowerCase() === 'draw').length;
+    const p = matchRows.length;
+    const cards = document.getElementById('match-summary-cards');
+    cards.innerHTML = `
+      <div class="summary-card"><div class="lbl">Played</div><div class="val">${p}</div></div>
+      <div class="summary-card"><div class="lbl">Won</div><div class="val" style="color:#4ddfff">${won}</div></div>
+      <div class="summary-card"><div class="lbl">Lost</div><div class="val" style="color:#ff6b6b">${lost}</div></div>
+      <div class="summary-card"><div class="lbl">Draw</div><div class="val" style="color:#ffd166">${draw}</div></div>
+      <div class="summary-card"><div class="lbl">Win Rate</div><div class="val">${p ? Math.round(won / p * 100) : 0}<span style="font-size:1.1rem">%</span></div></div>
+    `;
+    cards.style.display = 'grid';
+  }
+}
+
+async function loadMatches() {
+  if (MATCH_CSV === 'MATCH_HISTORY_CSV_URL') return;
+  document.getElementById('match-placeholder').style.display = 'none';
+  try {
+    const { headers, rows } = await fetchCSV(MATCH_CSV);
+    matchHeaders = headers; matchRows = rows;
+    const thead = document.getElementById('matchTable').querySelector('thead');
+    thead.innerHTML = '<tr>' + headers.map(h => `<th style="cursor:default">${h}</th>`).join('') + '</tr>';
+    document.getElementById('matchTableWrap').style.display = 'block';
+    document.getElementById('match-filters-row').style.display = 'flex';
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        matchFilter = btn.dataset.filter;
+        renderMatches();
+      });
+    });
+    renderMatches();
+  } catch {
+    document.getElementById('match-placeholder').innerHTML =
+      '<p>⚠ Could not load match history. Check your CSV URL.</p>';
+    document.getElementById('match-placeholder').style.display = 'block';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHARTS
+   ══════════════════════════════════════════════════════════════ */
+const baseTick = { color: SUBTEXT_HEX, font: { family: "'IBM Plex Mono'", size: 10 } };
+const baseGrid = { color: 'rgba(255,255,255,0.04)' };
+
+function findCol(headers, ...terms) {
+  for (const t of terms) {
+    const i = headers.findIndex(h => h.toLowerCase().includes(t.toLowerCase()));
+    if (i >= 0) return i;
+  }
+  return -1;
+}
+
+function hbar(wrapId, labels, data, color, unit) {
+  const wrap = document.getElementById(wrapId);
+  wrap.style.height = Math.max(220, labels.length * 40 + 60) + 'px';
+  wrap.innerHTML = '<canvas></canvas>';
+  new Chart(wrap.querySelector('canvas'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 4, barThickness: 16 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x + (unit ? ' ' + unit : '') } }
+      },
+      scales: {
+        x: { beginAtZero: true, ticks: baseTick, grid: baseGrid },
+        y: { ticks: { ...baseTick, autoSkip: false }, grid: baseGrid }
+      }
+    }
+  });
+}
+
+function buildCharts(bH, bR, wH, wR) {
+  const TOP = 8;
+  const nb = findCol(bH, 'Player');
+  const rc = findCol(bH, 'Runs');
+  const ac = findCol(bH, 'S/R');
+  const nw = findCol(wH, 'Player');
+  const wc = findCol(wH, 'Wickets');
+  const ec = findCol(wH, 'Economy');
+
+  if (nb >= 0 && rc >= 0) { const s = [...bR].sort((a, b) => parseFloat(b[rc] || 0) - parseFloat(a[rc] || 0)).slice(0, TOP); hbar('wrap-runs', s.map(r => r[nb]), s.map(r => parseFloat(r[rc] || 0)), COLOR_RUNS, 'runs'); }
+  else document.getElementById('wrap-runs').innerHTML = '<div class="chart-loading">Column "Runs" not found</div>';
+
+  if (nb >= 0 && ac >= 0) { const s = [...bR].sort((a, b) => parseFloat(b[ac] || 0) - parseFloat(a[ac] || 0)).slice(0, TOP); hbar('wrap-sr', s.map(r => r[nb]), s.map(r => parseFloat(r[ac] || 0)), COLOR_SR, 'S/R'); }
+  else document.getElementById('wrap-sr').innerHTML = '<div class="chart-loading">Column "S/R" not found</div>';
+
+  if (nw >= 0 && wc >= 0) { const s = [...wR].sort((a, b) => parseFloat(b[wc] || 0) - parseFloat(a[wc] || 0)).slice(0, TOP); hbar('wrap-wkts', s.map(r => r[nw]), s.map(r => parseFloat(r[wc] || 0)), COLOR_WKTS, 'wkts'); }
+  else document.getElementById('wrap-wkts').innerHTML = '<div class="chart-loading">Column "Wickets" not found</div>';
+
+  if (nw >= 0 && ec >= 0) { const s = [...wR].filter(r => parseFloat(r[ec]) > 0).sort((a, b) => parseFloat(a[ec]) - parseFloat(b[ec])).slice(0, TOP); hbar('wrap-econ', s.map(r => r[nw]), s.map(r => parseFloat(r[ec] || 0)), COLOR_ECON, 'per over'); }
+  else document.getElementById('wrap-econ').innerHTML = '<div class="chart-loading">Column "Economy" not found</div>';
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BOOT
+   ══════════════════════════════════════════════════════════════ */
+async function init() {
+  await Promise.all([loadStatSheet('batting'), loadStatSheet('bowling')]);
+  loadMatches();
+  buildCharts(sheets.batting.headers, sheets.batting.rows, sheets.bowling.headers, sheets.bowling.rows);
+}
+init();
+</script>
+</body>
+</html>
