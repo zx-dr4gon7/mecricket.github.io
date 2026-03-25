@@ -12,23 +12,62 @@
     /* ════════════════════════════════════════════════════
        COLOUR PALETTE
        ════════════════════════════════════════════════════ */
-    :root {
-      --bg:        #060e1f;
-      --surface:   #0d1e3a;
-      --border:    #1a3260;
-      --header-bg: #0a2050;
-      --accent:    #3b9eff;
-      --accent2:   #7ec8ff;
-      --muted:     #2a5080;
-      --text:      #e8f2ff;
-      --subtext:   #6a9fc8;
-      --elite:     #4ade80;
-      --vs-left:   #3b9eff;
-      --vs-right:  #f97316;
-      --font-display: 'Oswald', sans-serif;
-      --font-body:    'DM Sans', sans-serif;
-      --font-mono:    'IBM Plex Mono', monospace;
-    }
+    /* ☀️ LIGHT THEME & HIGHLIGHTING */
+:root {
+  --bg: #f0f2f5;           /* Light blue-grey background */
+  --surface: #ffffff;      /* White cards */
+  --border: #dee2e6;       /* Light border */
+  --text: #1a2b4b;         /* Dark navy text */
+  --subtext: #4a5568;      /* Grey subtext */
+  --accent: #0066ff;       /* Main blue */
+  --accent-soft: rgba(0, 102, 255, 0.1);
+  --win-bg: #e6fffa;       /* Green highlight for the winner */
+  --win-text: #008767;     /* Dark green text for winner */
+  --elite-bg: #fff9db;     /* Gold for elite stats */
+  --elite-text: #856404;
+}
+
+/* Winner Highlighting Styles */
+.vs-cell.win-left, .vs-cell.win-right {
+  background-color: var(--win-bg);
+  color: var(--win-text);
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.vs-cell.elite-val {
+  background-color: var(--elite-bg);
+  color: var(--elite-text);
+  position: relative;
+}
+
+.vs-cell.elite-val::after {
+  content: ' 🔥';
+}
+
+/* Ensure the VS Grid looks clean in Light Mode */
+.vs-stat-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0;
+}
+
+.vs-cell {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-size: 1.1rem;
+}
+
+.vs-cell-label {
+  width: 100px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--subtext);
+  text-transform: uppercase;
+  font-weight: 600;
+}
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -811,23 +850,17 @@ const HERO_STATS = [
 
 /* ── VS comparison columns ── */
 const VS_BATTING_COLS = [
-  { key:'Matches',  label:'Matches',  higherWins: true  },
-  { key:'Innings',  label:'Innings',  higherWins: true  },
-  { key:'Runs',     label:'Runs',     higherWins: true  },
-  { key:'Ave',      label:'Average',  higherWins: true  },
-  { key:'S/R',      label:'S / R',    higherWins: true  },
-  { key:'NO',       label:'N/O',      higherWins: true  },
-  { key:'HS',       label:'H / S',    higherWins: true  },
-  { key:'4s',       label:'Fours',    higherWins: true  },
-  { key:'6s',       label:'Sixes',    higherWins: true  },
-  { key:'Catches',  label:'Catches',  higherWins: true  },
+  { key: 'Matches', label: 'Matches', higherWins: true },
+  { key: 'Runs', label: 'Runs', higherWins: true },
+  { key: 'Ave', label: 'Average', higherWins: true },
+  { key: 'S/R', label: 'S/R', higherWins: true },
+  { key: 'HS', label: 'High Score', higherWins: true }
 ];
+
 const VS_BOWLING_COLS = [
-  { key:'Overs',    label:'Overs',    higherWins: true  },
-  { key:'Wickets',  label:'Wickets',  higherWins: true  },
-  { key:'Economy',  label:'Economy',  higherWins: false },
-  { key:'Runs',     label:'Runs Conceded', higherWins: false },
-  { key:'Maidens',  label:'Maidens',  higherWins: true  },
+  { key: 'Wickets', label: 'Wickets', higherWins: true },
+  { key: 'Economy', label: 'Economy', higherWins: false }, // Lower is better
+  { key: 'Ave', label: 'Average', higherWins: false }      // Lower is better
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -1149,7 +1182,7 @@ function openProfile(playerName) {
       const r = calcRank(cfg.sheet, playerName, cfg.key, cfg.higherBetter);
       if (r !== null) {
         const cls = r <= 3 ? `rank-${r}` : '';
-        rankHTML = `<div class="rank-badge ${cls}">${ordinal(r)} in Club</div>`;
+        rankHTML = `<div class="rank-badge ${cls}">${ordinal(r)}</div>`;
       }
     }
 
@@ -1258,42 +1291,38 @@ document.getElementById('modal-backdrop').addEventListener('click', e => {
 function vsWinner(lv, rv, higherWins) {
   const l = parseFloat(lv), r = parseFloat(rv);
   if (isNaN(l) || isNaN(r) || l === r) return 'tie';
+  // logic to determine if the left or right side won based on higherWins flag
   return higherWins ? (l > r ? 'left' : 'right') : (l < r ? 'left' : 'right');
 }
 
 function buildVsSection(emojiTitle, cols, leftStats, rightStats) {
-  // Only show section if at least one player has data
   if (!leftStats && !rightStats) return '';
 
-  // Filter to cols both players could have
-  const activeRows = cols.map(col => {
-    const lv = leftStats  ? (leftStats[col.key]  || '—') : '—';
+  const rowsHtml = cols.map(col => {
+    const lv = leftStats ? (leftStats[col.key] || '—') : '—';
     const rv = rightStats ? (rightStats[col.key] || '—') : '—';
-    if (lv === '—' && rv === '—') return null;
-    return { col, lv, rv };
-  }).filter(Boolean);
+    
+    if (lv === '—' && rv === '—') return '';
 
-  if (!activeRows.length) return '';
+    const winner = vsWinner(lv, rv, col.higherWins);
+    
+    // Apply highlighting classes
+    const lClass = (winner === 'left') ? 'win-left' : '';
+    const rClass = (winner === 'right') ? 'win-right' : '';
 
-  const rowsHtml = activeRows.map(({ col, lv, rv }) => {
-    const w = vsWinner(lv, rv, col.higherWins);
-    const lClass = isElite(col.key, lv) ? 'elite-val' : (w === 'left'  ? 'win-left'  : '');
-    const rClass = isElite(col.key, rv) ? 'elite-val' : (w === 'right' ? 'win-right' : '');
-    return `<div class="vs-stat-row">
-      <div class="vs-cell left ${lClass}">${lv}</div>
-      <div class="vs-cell-label">${col.label}</div>
-      <div class="vs-cell right ${rClass}">${rv}</div>
-    </div>`;
+    return `
+      <div class="vs-stat-row">
+        <div class="vs-cell ${lClass}">${lv}</div>
+        <div class="vs-cell-label">${col.label}</div>
+        <div class="vs-cell ${rClass}">${rv}</div>
+      </div>`;
   }).join('');
 
-  return `<div class="vs-stat-section">
-    <div class="vs-section-title">
-      <span class="col-left">${emojiTitle}</span>
-      <span class="col-mid">Stat</span>
-      <span class="col-right">${emojiTitle}</span>
-    </div>
-    ${rowsHtml}
-  </div>`;
+  return `
+    <div class="vs-stat-section">
+      <h3 style="text-align:center; margin: 20px 0;">${emojiTitle}</h3>
+      ${rowsHtml}
+    </div>`;
 }
 
 function openVsMode(playerA, playerB) {
