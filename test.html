@@ -13,30 +13,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
-    /*=======================================================
-    Shareable profile card
-    =========================================================*/
-
-    .share-btn {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 15px;
-  width: 100%;
-  font-family: var(--font-display);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* This class hides the button from the final image */
-.no-export {
-  display: none !important;
-}
-    
     /* ════════════════════════════════════════════════════
        COLOUR PALETTE
        ════════════════════════════════════════════════════ */
@@ -1078,8 +1054,6 @@ input:checked + .slider:before {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-
-  
 /* ══════════════════════════════════════════════════════════════
    CONFIG — CSV URLs untouched
    ══════════════════════════════════════════════════════════════ */
@@ -1503,7 +1477,30 @@ if (isTopScorer || isTopWicketer) {
   });
 }
 
-  html += `<button class="share-btn" onclick="downloadCard('profile-view')">📸 Save for Instagram</button>`;
+
+// 1. Add the Share Button (if it doesn't exist yet)
+let shareBtn = document.getElementById('profile-share-btn');
+if (!shareBtn) {
+    shareBtn = document.createElement('button');
+    shareBtn.id = 'profile-share-btn';
+    shareBtn.className = 'share-btn';
+    shareBtn.innerText = '📸 Save for Instagram';
+    shareBtn.onclick = () => downloadCard('profile-view');
+    document.querySelector('.profile-card').appendChild(shareBtn);
+}
+
+// 2. Trigger Confetti for the #1 Player
+const runIdx = sheets.batting.headers.findIndex(h => h === 'Runs');
+const topScorer = [...sheets.batting.rows].sort((a,b) => parseFloat(b[runIdx]) - parseFloat(a[runIdx]))[0];
+
+if (topScorer && playerName === topScorer[0]) {
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#3b9eff', '#4ade80', '#ffffff']
+    });
+}
 
 }
 
@@ -1637,7 +1634,6 @@ function openVsMode(playerA, playerB) {
 
   document.getElementById('vs-back-btn').onclick = () => showView('profile-view');
   showView('vs-view');
-  html += `<button class="share-btn" onclick="downloadCard('vs-view')">📸 Save for Instagram</button>`;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1745,35 +1741,34 @@ checkbox.addEventListener('change', (e) => {
   if (window.myChart) updateCharts(); 
 });
 
-
   /*
-  Profile Card sharing
+  Download logic
   */
+
   async function downloadCard(elementId) {
   const element = document.getElementById(elementId);
   const btn = element.querySelector('.share-btn');
+  const backBtn = element.querySelector('.back-btn');
   
-  // 1. Hide the button so it's not in the photo
+  // Hide buttons from the photo
   if(btn) btn.classList.add('no-export');
+  if(backBtn) backBtn.classList.add('no-export');
 
-  // 2. Capture the element
   const canvas = await html2canvas(element, {
-    backgroundColor: '#060e1f', // Forces your navy background
-    scale: 2, // Makes it high resolution for IG
-    logging: false,
-    useCORS: true // Helps with loading the logo.png
+    backgroundColor: '#060e1f', // Matches your dark theme
+    scale: 2, // High resolution for IG
+    useCORS: true
   });
 
-  // 3. Download the image
   const link = document.createElement('a');
   link.download = `MaineEast_Stats_${Date.now()}.png`;
-  link.href = canvas.toDataURL('image/png');
+  link.href = canvas.toDataURL();
   link.click();
 
-  // 4. Show the button again on the website
+  // Show buttons again
   if(btn) btn.classList.remove('no-export');
+  if(backBtn) backBtn.classList.remove('no-export');
 }
-  
 
 </script>
 </body>
