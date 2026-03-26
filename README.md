@@ -3,7 +3,7 @@ A professional, dynamic, and mobile-responsive statistics engine built for the *
 ---
 
 ## 🚀 Live Demo
-**[View the Dashboard Live]((https://zx-dr4gon7.github.io/mecricket.github.io/))**
+**[View the Dashboard Live](https://zx-dr4gon7.github.io/mecricket.github.io/)** *(Note: Replace 'reponame' with your actual repository name in your GitHub settings)*
 
 ---
 
