@@ -375,44 +375,55 @@ input:checked + .slider:before {
 
     /* ── Tables ── */
     /* 📱 MOBILE RESPONSIVE TABLE FIX */
+/* 💻 PC VERSION (Restore the original look) */
 .table-wrap {
   width: 100%;
-  overflow-x: auto;            /* Enables horizontal scroll */
-  -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
   background: var(--surface);
   border-radius: 8px;
-  position: relative;
-  margin-bottom: 1rem;
+  overflow: hidden; /* No scrollbars on PC */
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px;            /* Forces the table to stay wide so you can scroll */
-  font-size: 0.95rem;
+  font-family: var(--font-body); /* Restores DM Sans */
+  color: var(--text);
 }
 
-/* 🏆 STICKY NAMES: Keeps the player name visible while you scroll right */
-table th:first-child, 
-table td:first-child {
-  position: sticky;
-  left: 0;
-  background-color: var(--surface) !important;
-  z-index: 2;
-  border-right: 2px solid var(--border);
-  min-width: 120px;            /* Ensures names don't wrap too much */
+th {
+  font-family: var(--font-display); /* Restores Oswald */
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.03);
+  color: var(--accent);
 }
 
-/* Ensure the header stays above the sticky body cells */
-table thead th:first-child {
-  z-index: 3;
+/* 📱 MOBILE VERSION (Only kicks in on small screens) */
+@media (max-width: 768px) {
+  .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 650px; /* Only force width on mobile so we can scroll */
+  }
+
+  /* Sticky name only on mobile so PC stays clean */
+  table td:first-child, 
+  table th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: var(--surface) !important;
+    z-index: 10;
+    border-right: 1px solid var(--border);
+  }
 }
 
-/* Fix for the 'Stuck Loading' - ensures state rows can show/hide */
+/* Fix for the Loading Spinner alignment */
 .state-row td {
   text-align: center;
   padding: 40px !important;
-  background: transparent !important; /* Prevents sticky color from hiding spinner */
+  font-family: var(--font-body);
 }
     .spinner {
       display: inline-block; width: 16px; height: 16px;
