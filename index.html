@@ -1,3 +1,5 @@
+Opens in a new window
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1663,44 +1665,8 @@ checkbox.addEventListener('change', (e) => {
   // High-performance fix: refresh charts if needed
   if (window.myChart) updateCharts(); 
 });
-
-  /* =================================================
-      Mobile Scroll fix
-     ================================================= */
-
-/* 📱 MOBILE TABLE FIX */
-.table-wrap {
-  width: 100%;
-  overflow-x: auto; /* This enables the horizontal scroll */
-  -webkit-overflow-scrolling: touch; /* Smooth swiping on iPhone/iPad */
-  position: relative;
-  border-radius: 8px;
-}
-
-/* Ensure the table itself doesn't shrink, forcing the scrollbar to appear */
-table {
-  min-width: 600px; /* Adjust this number based on how many columns you have */
-  border-collapse: collapse;
-}
-
-/* 🏆 STICKY NAMES (Keep names visible while scrolling) */
-/* This makes the first column (Player Name) stay locked to the left */
-table th:first-child, 
-table td:first-child {
-  position: sticky;
-  left: 0;
-  background-color: var(--surface) !important; /* Matches your card color */
-  z-index: 10;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Adds a little depth */
-}
-
-/* Header needs a higher z-index to stay on top of the sticky name */
-table thead th:first-child {
-  z-index: 11;
-}
-
   
-  
+
 </script>
 </body>
 </html>
