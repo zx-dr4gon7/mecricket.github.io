@@ -63,4 +63,3 @@ This project is open-source and available under the **MIT License**.
 
 ---
 *Created with ❤️ for the Maine East Cricket Community.*
-"""
