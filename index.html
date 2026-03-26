@@ -3,47 +3,251 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <title>Maine East Cricket</title>
-  
   <link rel="icon" type="image/png" href="logo.png?v=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <!--
-  ╔══════════════════════════════════════════════════════════════╗
-  ║  FONTS — change the font here to update the whole site.     ║
-  ║  Replace both the ?family= URL param AND the font-family    ║
-  ║  values in the :root block below.                           ║
-  ║                                                             ║
-  ║  Display font (headings): Oswald                            ║
-  ║  Body font (tables/text): DM Sans                           ║
-  ║  Monospace font (labels):  IBM Plex Mono                    ║
-  ║                                                             ║
-  ║  Browse fonts at fonts.google.com                           ║
-  ╚══════════════════════════════════════════════════════════════╝
-  -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    /* ════════════════════════════════════════════════════════════
-       COLOUR PALETTE — edit these variables to re-theme the site.
-       Every colour on the page comes from one of these values.
-       ════════════════════════════════════════════════════════════ */
-    :root {
-      --bg:        #060e1f;   /* page background — very dark navy        */
-      --surface:   #0d1e3a;   /* card/table background — deep cobalt     */
-      --border:    #1a3260;   /* border lines                            */
-      --header-bg: #0a2050;   /* table header row background             */
-      --accent:    #3b9eff;   /* primary accent — bright azure blue      */
-      --accent2:   #7ec8ff;   /* lighter accent for highlights           */
-      --muted:     #2a5080;   /* muted elements                          */
-      --text:      #e8f2ff;   /* primary text — cool white               */
-      --subtext:   #6a9fc8;   /* secondary/muted text                    */
+  
 
-      /* ── Font families — change these to match new Google Fonts ── */
-      --font-display: 'Oswald', sans-serif;
-      --font-body:    'DM Sans', sans-serif;
-      --font-mono:    'IBM Plex Mono', monospace;
-    }
+  <style>
+    /* ════════════════════════════════════════════════════
+       COLOUR PALETTE
+       ════════════════════════════════════════════════════ */
+    /* ☀️ LIGHT THEME & HIGHLIGHTING */
+:root {
+  /* 🌑 DARK THEME (Default) */
+  --bg: #060e1f;
+  --surface: #0d1e3a;
+  --border: #1a2b4b;
+  --accent: #3b9eff;
+  --muted: #2a5080;
+  --text: #e8f2ff;
+  --subtext: #6a9fc8;
+  --elite: #4ade80;
+  --vs-left: #3b9eff;
+  --vs-right: #f97316;
+  
+  /* Fonts - Preserved */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  
+  --transition: 0.3s ease;
+}
+
+/* ☀️ LIGHT THEME */
+body.light-mode {
+  --bg: #f4f7fa;
+  --surface: #ffffff;
+  --border: #d1d9e6;
+  --accent: #0066ff;
+  --muted: #8a99af;
+  --text: #1a2b4b;
+  --subtext: #5c6e8c;
+  --elite: #008767;
+  --vs-left: #0066ff;
+  --vs-right: #e65100;
+}
+
+/* Apply fonts globally */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+h1, h2, h3, .vs-player-name {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+  /* THEME TOGGLE STYLING */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 28px;
+  position: relative;
+  width: 54px;
+}
+
+.theme-switch input { display: none; }
+
+.slider {
+  background-color: #1a2b4b; /* Darker navy for the track */
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+  border: 1px solid var(--border);
+}
+
+.slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 20px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 20px;
+  z-index: 2;
+}
+
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(24px); }
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
+
+/* Emoji positions inside the slider */
+.icon-sun, .icon-moon {
+  position: absolute;
+  top: 4px;
+  font-size: 14px;
+  user-select: none;
+}
+.icon-sun { left: 6px; }
+.icon-moon { right: 6px; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   STATIC HEADER (Always Dark)
+   ══════════════════════════════════════════════════════════════ */
+header {
+  background-color: #060e1f !important;
+  border-bottom: 1px solid #1a2b4b !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+}
+
+header h1, header h1 span, .header-badge {
+  color: #e8f2ff !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODERN THEME TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 26px;
+  position: relative;
+  width: 50px;
+}
+
+.theme-switch input { display: none; }
+
+.slider {
+  background-color: #1a2b4b; /* Dark track */
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+  border: 1px solid #2a5080;
+  border-radius: 34px;
+}
+
+/* The sliding circle */
+.slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 18px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 18px;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+input:checked + .slider {
+  background-color: var(--accent); /* Turns blue when on */
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Toggle Icons (Customizable) */
+.icon-left, .icon-right {
+  position: absolute;
+  top: 5px;
+  font-size: 12px;
+  user-select: none;
+}
+.icon-left { right: 6px; } /* Moon position */
+.icon-right { left: 7px; }  /* Sun position */
+
+/* ══════════════════════════════════════════════════════════════
+   VS MODE & HIGHLIGHTING
+   ══════════════════════════════════════════════════════════════ */
+
+/* The Stat Rows */
+.vs-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.vs-cell {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-family: var(--font-mono); /* Keeps numbers aligned */
+  transition: all 0.2s ease;
+}
+
+.vs-cell-label {
+  flex: 0 0 100px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--subtext);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* THE WINNER: Using solid blue for high contrast */
+.vs-cell.win-highlight {
+  background-color: var(--accent) !important;
+  color: #ffffff !important; 
+  font-weight: 700;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* THE ELITE: Adding the Fire */
+.vs-cell.elite-val::after {
+  content: ' 🔥';
+  font-size: 0.9rem;
+}
+
+/* Elite + Winner combo: subtle glow */
+.vs-cell.elite-val.win-highlight {
+  box-shadow: 0 0 12px rgba(255, 165, 0, 0.3);
+}
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -53,14 +257,32 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* subtle dot-grid texture */
     body::before {
       content: '';
       position: fixed; inset: 0;
       background-image: radial-gradient(circle, rgba(59,158,255,0.07) 1px, transparent 1px);
       background-size: 28px 28px;
       pointer-events: none; z-index: 0;
+    }
+
+    /* ════════════════════════════════════════════════════
+       FEATURE 5 — SPA FADE TRANSITIONS
+       ════════════════════════════════════════════════════ */
+    .spa-view { position: relative; z-index: 1; }
+    .spa-view.view-entering {
+      animation: spaEnter .38s cubic-bezier(.22,.68,0,1.15) both;
+    }
+    .spa-view.view-leaving {
+      animation: spaLeave .22s ease forwards;
+      pointer-events: none;
+    }
+    @keyframes spaEnter {
+      from { opacity: 0; transform: translateY(14px) scale(0.985); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes spaLeave {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to   { opacity: 0; transform: translateY(-8px) scale(0.99); }
     }
 
     /* ── Header ── */
@@ -74,12 +296,11 @@
       padding: 0 2.5rem; gap: 1rem;
     }
     .header-logo {
-      width: 36px; height: 36px;
-      background: var(--accent); border-radius: 8px;
+      width: 36px; height: 36px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; flex-shrink: 0;
+      overflow: hidden; background: none;
     }
-    /* ── SITE TITLE — edit the text inside <h1> in the HTML below ── */
     header h1 {
       font-family: var(--font-display);
       font-size: 1.25rem; letter-spacing: 0.04em;
@@ -96,9 +317,8 @@
 
     /* ── Hero ── */
     .hero-band {
-      position: relative; z-index: 1;
-      padding: 3rem 2.5rem 2rem;
       max-width: 1100px; margin: 0 auto;
+      padding: 3rem 2.5rem 2rem;
     }
     .hero-band h2 {
       font-family: var(--font-display);
@@ -111,7 +331,6 @@
 
     /* ── Tabs ── */
     .tabs-row {
-      position: relative; z-index: 1;
       max-width: 1100px; margin: 0 auto;
       padding: 0 2.5rem; display: flex; gap: 0.25rem;
       border-bottom: 1px solid var(--border);
@@ -130,7 +349,6 @@
 
     /* ── Main / panels ── */
     main {
-      position: relative; z-index: 1;
       max-width: 1100px; margin: 0 auto;
       padding: 2rem 2.5rem 0;
     }
@@ -233,10 +451,10 @@
       padding: 2px 6px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
     }
 
-    /* ── Charts section ── */
+    /* ── Charts ── */
     .charts-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 2.5rem 0; }
     .charts-section {
-      position: relative; z-index: 1; max-width: 1100px; margin: 0 auto;
+      max-width: 1100px; margin: 0 auto;
       padding: 2.5rem 2.5rem 4rem;
     }
     .charts-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.75rem; }
@@ -259,210 +477,696 @@
       color: var(--subtext); font-family: var(--font-mono); font-size: 0.75rem;
     }
 
-    @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
+    /* ════════════════════════════════════════════════════
+       PROFILE VIEW
+       ════════════════════════════════════════════════════ */
+    .profile-back-row {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem 2.5rem 0;
+      display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    }
+
+    /* Shared button styles */
+    .back-btn, .compare-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      border-radius: 8px; padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: all .18s; border: 1px solid;
+    }
+    .back-btn {
+      background: var(--surface); border-color: var(--border); color: var(--subtext);
+    }
+    .back-btn svg { transition: transform .18s; }
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(59,158,255,0.07); }
+    .back-btn:hover svg { transform: translateX(-3px); }
+
+    /* FEATURE 1: Compare button */
+    .compare-btn {
+      background: rgba(59,158,255,0.1); border-color: rgba(59,158,255,0.3); color: var(--accent);
+      margin-left: auto;
+    }
+    .compare-btn:hover { background: rgba(59,158,255,0.2); border-color: var(--accent); }
+
+    .profile-card {
+      max-width: 1100px; margin: 1.5rem auto 0;
+      padding: 0 2.5rem 3rem;
+    }
+    .profile-hero {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 2rem 2rem 1.75rem;
+      margin-bottom: 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(59,158,255,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .profile-hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, transparent 70%);
+    }
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+      color: var(--text); line-height: 1; margin-bottom: 0.5rem;
+    }
+    .profile-name span { color: var(--accent); }
+    .profile-meta {
+      font-family: var(--font-mono); font-size: 0.68rem; color: var(--subtext);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.75rem;
+    }
+
+    /* FEATURE 2: hero stats flex so survivors expand to fill width */
+    .profile-hero-stats { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .hero-stat {
+      background: rgba(59,158,255,0.08); border: 1px solid rgba(59,158,255,0.2);
+      border-radius: 10px; padding: 1rem 1.5rem;
+      flex: 1 1 100px; min-width: 100px; /* grow to fill */
+      position: relative;
+      transition: border-color .2s;
+    }
+    .hero-stat .hs-lbl {
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--subtext);
+      margin-bottom: 6px;
+    }
+    .hero-stat .hs-val {
+      font-family: var(--font-display); font-size: 2.2rem; font-weight: 700;
+      color: var(--accent); line-height: 1;
+    }
+
+    /* FEATURE 3: elite glow + fire emoji */
+    .hero-stat.elite {
+      background: rgba(74,222,128,0.08);
+      border-color: rgba(74,222,128,0.3);
+    }
+    .hero-stat.elite .hs-val { color: var(--elite); }
+    .hero-stat.elite::after {
+      content: '🔥';
+      position: absolute; top: 8px; right: 10px; font-size: 1rem;
+    }
+
+    /* FEATURE 4: rank badges */
+    .rank-badge {
+      display: inline-block; margin-top: 6px;
+      font-family: var(--font-mono); font-size: 0.58rem; font-weight: 600;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      background: rgba(59,158,255,0.14); border: 1px solid rgba(59,158,255,0.28);
+      border-radius: 20px; padding: 2px 9px; color: var(--accent2);
+    }
+    .rank-badge.rank-1 { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.4); color: #ffd700; }
+    .rank-badge.rank-2 { background: rgba(200,200,200,0.1); border-color: rgba(200,200,200,0.3); color: #c0c0c0; }
+    .rank-badge.rank-3 { background: rgba(205,127,50,0.12); border-color: rgba(205,127,50,0.3); color: #cd7f32; }
+
+    /* Profile detail tables */
+    .profile-tables-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+    .profile-stat-block {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .profile-stat-block-title {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2);
+      padding: 0.9rem 1rem; background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.65rem 1rem; border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .profile-stat-row:last-child { border-bottom: none; }
+    .profile-stat-row:hover { background: rgba(59,158,255,0.06); }
+    .profile-stat-key {
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--subtext);
+      letter-spacing: 0.07em; text-transform: uppercase;
+    }
+    .profile-stat-val {
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; color: var(--text);
+    }
+    /* FEATURE 3: elite rows in detail tables */
+    .profile-stat-row.elite-row .profile-stat-val { color: var(--elite); }
+    .profile-stat-row.elite-row .profile-stat-key::after { content: ' 🔥'; }
+
+    .profile-no-data {
+      padding: 1.5rem 1rem; text-align: center;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+    }
+
+    /* ════════════════════════════════════════════════════
+       FEATURE 1 — COMPARE PICKER MODAL
+       ════════════════════════════════════════════════════ */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(6,14,31,0.88); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      animation: backdropIn .2s ease both;
+    }
+    @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.75rem; width: min(480px, 94vw);
+      animation: modalIn .28s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-title {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 1rem;
+    }
+    .modal-search-wrap { position: relative; margin-bottom: 0.75rem; }
+    .modal-search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .modal-search-wrap input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 12px 9px 34px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color .2s;
+    }
+    .modal-search-wrap input:focus { border-color: var(--accent); }
+    .modal-player-list {
+      max-height: 260px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    .modal-player-list::-webkit-scrollbar { width: 5px; }
+    .modal-player-list::-webkit-scrollbar-track { background: var(--bg); }
+    .modal-player-list::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
+    .modal-player-item {
+      padding: 0.7rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border);
+      font-size: 0.9rem; transition: background .12s; display: flex; align-items: center; gap: 0.6rem;
+    }
+    .modal-player-item:last-child { border-bottom: none; }
+    .modal-player-item:hover { background: rgba(59,158,255,0.1); color: var(--accent2); }
+    .modal-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    .modal-pip.both { background: var(--accent); }
+    .modal-cancel {
+      margin-top: 1rem; width: 100%;
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--subtext); font-family: var(--font-mono); font-size: 0.72rem;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 9px; cursor: pointer; transition: all .15s;
+    }
+    .modal-cancel:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ════════════════════════════════════════════════════
+       FEATURE 1 — VS / SPLIT-SCREEN LAYOUT
+       ════════════════════════════════════════════════════ */
+    .vs-top-row {
+      max-width: 1100px; margin: 0 auto;
+      padding: 1.5rem 2.5rem 0;
+    }
+    .vs-grid {
+      max-width: 1100px; margin: 1.5rem auto 0;
+      padding: 0 2.5rem 3rem;
+    }
+
+    /* Name banners */
+    .vs-name-row {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 0;
+      margin-bottom: 1rem; align-items: stretch;
+    }
+    .vs-name-panel {
+      border-radius: 14px; padding: 1.5rem 1.5rem 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    .vs-name-panel.left {
+      background: linear-gradient(135deg, rgba(59,158,255,0.18) 0%, rgba(13,30,58,1) 65%);
+      border: 1px solid rgba(59,158,255,0.3);
+      border-radius: 14px 0 0 14px;
+    }
+    .vs-name-panel.left::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background: linear-gradient(90deg, var(--vs-left), transparent);
+    }
+    .vs-name-panel.right {
+      background: linear-gradient(225deg, rgba(249,115,22,0.18) 0%, rgba(13,30,58,1) 65%);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 0 14px 14px 0; text-align: right;
+    }
+    .vs-name-panel.right::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+      background: linear-gradient(270deg, var(--vs-right), transparent);
+    }
+    .vs-player-tag {
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.35rem;
+    }
+    .vs-name-panel.left  .vs-player-tag { color: var(--vs-left); }
+    .vs-name-panel.right .vs-player-tag { color: var(--vs-right); }
+    .vs-player-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .vs-name-panel.left  .vs-player-name { color: var(--vs-left); }
+    .vs-name-panel.right .vs-player-name { color: var(--vs-right); }
+
+    /* Centre VS badge */
+    .vs-badge-col {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 0 0.75rem;
+      background: var(--header-bg);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .vs-badge {
+      font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;
+      color: var(--text); letter-spacing: 0.08em;
+    }
+
+    /* Comparison stat table */
+    .vs-stat-section {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; margin-bottom: 1rem;
+    }
+    .vs-stat-section:last-child { margin-bottom: 0; }
+    .vs-section-title {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2);
+      padding: 0.85rem 1rem; background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr auto 1fr;
+    }
+    .vs-section-title .col-left  { text-align: left; }
+    .vs-section-title .col-mid   { text-align: center; min-width: 90px; }
+    .vs-section-title .col-right { text-align: right; }
+
+    .vs-stat-row {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      border-bottom: 1px solid var(--border); transition: background .12s;
+    }
+    .vs-stat-row:last-child { border-bottom: none; }
+    .vs-stat-row:hover { background: rgba(59,158,255,0.04); }
+
+    .vs-cell {
+      padding: 0.65rem 1rem;
+      font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+      color: var(--text);
+    }
+    .vs-cell.left  { text-align: left; }
+    .vs-cell.right { text-align: right; }
+    .vs-cell-label {
+      padding: 0.65rem 0.5rem;
+      font-family: var(--font-mono); font-size: 0.62rem; color: var(--subtext);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; white-space: nowrap; min-width: 90px;
+      background: rgba(255,255,255,0.02);
+      border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+    }
+    .vs-cell.win-left  { color: var(--vs-left);  font-weight: 700; }
+    .vs-cell.win-right { color: var(--vs-right); font-weight: 700; }
+    .vs-cell.elite-val { color: var(--elite); }
+    .vs-no-data {
+      padding: 1.5rem 1rem; text-align: center;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+    }
+
+    /* ════════════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════════════ */
+    @media (max-width: 700px) {
+      .charts-grid        { grid-template-columns: 1fr; }
+      .profile-tables-grid { grid-template-columns: 1fr; }
+      .vs-cell { font-size: 0.95rem; padding: 0.55rem 0.6rem; }
+      .vs-cell-label { min-width: 60px; font-size: 0.56rem; padding: 0.55rem 0.3rem; }
+      .vs-name-panel { padding: 1rem; }
+    }
     @media (max-width: 640px) {
-      header, .hero-band, .tabs-row, main, .charts-section { padding-left: 1rem; padding-right: 1rem; }
+      header, .hero-band, .tabs-row, main, .charts-section,
+      .profile-back-row, .profile-card, .vs-top-row, .vs-grid { padding-left: 1rem; padding-right: 1rem; }
       .charts-divider { margin-left: 1rem; margin-right: 1rem; }
       .hero-band h2 { font-size: 2.2rem; }
       td, th { padding: 0.6rem 0.65rem; font-size: 0.8rem; }
+      .hero-stat .hs-val { font-size: 1.7rem; }
+      .compare-btn .compare-label { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════
-     HEADER — edit the team name and season badge here
-     ══════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     HEADER
+     ════════════════════════════════════════════════════ -->
 <header>
-  <a href="/" style="display: flex; align-items: center; text-decoration: none;">
-    <div class="header-logo" style="overflow: hidden; background: none;">
-      <img src="logo.png" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='🏏'">
+  <a href="https://tinyurl.com/bluedemoncricket" style="display:flex;align-items:center;text-decoration:none;">
+    <div class="header-logo">
+      <img src="logo.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.innerHTML='🏏'">
     </div>
-    <h1>‎ | Maine East <span>Cricket</span></h1>
+    <h1>&#8203; | Maine East <span>Cricket</span></h1>
   </a>
-  <div class="header-badge">2025–26 Season</div>
+  
+  <div style="display:flex; align-items:center; gap: 15px;">
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" />
+        <div class="slider round">
+          <span class="icon-left">🔆</span>
+          <span class="icon-right">☀︎</span>
+        </div>
+      </label>
+    </div>
+    <div class="header-badge">2025–26 Season</div>
+  </div>
 </header>
 
-<!-- ══════════════════════════════════════════════════════
-     HERO — the large heading at the top of the page
-     ══════════════════════════════════════════════════════ -->
-<div class="hero-band">
-  <h2>Club <em>Stats</em><br>at a Glance</h2>  <!-- ← edit the hero heading here -->
-  <p>Maine East Cricket Club</p>  <!-- ← subtitle -->
-</div>
+<!-- ════════════════════════════════════════════════════
+     VIEW 1 — DASHBOARD
+     ════════════════════════════════════════════════════ -->
+<div id="dashboard-view" class="spa-view">
 
-<div class="tabs-row">
-  <button class="tab-btn active" data-tab="batting">🏏 Batting</button>
-  <button class="tab-btn" data-tab="bowling">⚡ Bowling</button>
-  <button class="tab-btn" data-tab="matches">📋 Match History</button>
-</div>
+  <div class="hero-band">
+    <h2>Club <em>Stats</em><br>at a Glance</h2>
+    <p>Maine East Cricket Club</p>
+  </div>
 
-<main>
-  <!-- BATTING -->
-  <div class="panel active" id="panel-batting">
-    <div class="search-row">
-      <div class="search-wrap">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="batting-search" placeholder="Search player…">
+  <div class="tabs-row">
+    <button class="tab-btn active" data-tab="batting">🏏 Batting</button>
+    <button class="tab-btn" data-tab="bowling">⚡ Bowling</button>
+    <button class="tab-btn" data-tab="matches">📋 Match History</button>
+  </div>
+
+  <main>
+    <!-- BATTING -->
+    <div class="panel active" id="panel-batting">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="batting-search" placeholder="Search player…">
+        </div>
+        <span class="row-count" id="batting-count"></span>
       </div>
-      <span class="row-count" id="batting-count"></span>
-    </div>
-    <div class="table-wrap">
-      <table id="battingTable">
-        <thead></thead>
-        <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- BOWLING -->
-  <div class="panel" id="panel-bowling">
-    <div class="search-row">
-      <div class="search-wrap">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="bowling-search" placeholder="Search player…">
+      <div class="table-wrap">
+        <table id="battingTable">
+          <thead></thead>
+          <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+        </table>
       </div>
-      <span class="row-count" id="bowling-count"></span>
     </div>
-    <div class="table-wrap">
-      <table id="bowlingTable">
-        <thead></thead>
-        <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
-      </table>
+
+    <!-- BOWLING -->
+    <div class="panel" id="panel-bowling">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="bowling-search" placeholder="Search player…">
+        </div>
+        <span class="row-count" id="bowling-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="bowlingTable">
+          <thead></thead>
+          <tbody><tr class="state-row"><td><span class="spinner"></span>Loading stats…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATCH HISTORY -->
+    <div class="panel" id="panel-matches">
+      <div id="match-summary-cards" class="summary-cards" style="display:none;"></div>
+      <div id="match-placeholder" class="placeholder-banner">
+        <p>
+          Match history is ready — just paste your CSV link in the JS config below.<br><br>
+          In Google Sheets: <strong>File → Share → Publish to web</strong><br>
+          Select your match history tab → choose <code>CSV</code> → copy the URL.<br><br>
+          Then replace <code>MATCH_HISTORY_CSV_URL</code> in the CONFIG block.
+        </p>
+      </div>
+      <div id="match-filters-row" class="match-filters" style="display:none;">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Won">Won</button>
+        <button class="filter-btn" data-filter="Lost">Lost</button>
+        <button class="filter-btn" data-filter="Draw">Draw</button>
+      </div>
+      <div class="table-wrap" id="matchTableWrap" style="display:none;">
+        <table id="matchTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </main>
+
+  <hr class="charts-divider">
+  <section class="charts-section">
+    <div class="charts-header">
+      <h3>Performance Charts</h3>
+      <span>Drawn from live stats</span>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Top Run-scorers</div>
+        <div id="wrap-runs" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Strike Rate</div>
+        <div id="wrap-sr" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Bowling Wickets Leaderboard</div>
+        <div id="wrap-wkts" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Bowling Economy Rate</div>
+        <div id="wrap-econ" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /#dashboard-view -->
+
+<!-- ════════════════════════════════════════════════════
+     VIEW 2 — PLAYER PROFILE
+     ════════════════════════════════════════════════════ -->
+<div id="profile-view" class="spa-view" style="display:none;">
+
+  <div class="profile-back-row">
+    <button class="back-btn" id="profile-back-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Back to Stats
+    </button>
+    <!-- FEATURE 1 trigger -->
+    <button class="compare-btn" id="compare-trigger-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span class="compare-label">Compare Player</span>
+    </button>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-hero">
+      <div class="profile-name" id="profile-name">Player Name</div>
+      <div class="profile-meta" id="profile-meta">Maine East Cricket Club</div>
+      <div class="profile-hero-stats" id="profile-hero-stats"></div>
+    </div>
+    <div class="profile-tables-grid">
+      <div class="profile-stat-block">
+        <div class="profile-stat-block-title">🏏 Batting</div>
+        <div id="profile-batting-rows"><div class="profile-no-data">No batting data</div></div>
+      </div>
+      <div class="profile-stat-block">
+        <div class="profile-stat-block-title">⚡ Bowling</div>
+        <div id="profile-bowling-rows"><div class="profile-no-data">No bowling data</div></div>
+      </div>
     </div>
   </div>
 
-  <!-- MATCH HISTORY -->
-  <div class="panel" id="panel-matches">
-    <div id="match-summary-cards" class="summary-cards" style="display:none;"></div>
-    <div id="match-placeholder" class="placeholder-banner">
-      <p>
-        Match history is ready — just paste your CSV link in the JS config below.<br><br>
-        In Google Sheets: <strong>File → Share → Publish to web</strong><br>
-        Select your match history tab → choose <code>CSV</code> → copy the URL.<br><br>
-        Then replace <code>MATCH_HISTORY_CSV_URL</code> in the CONFIG block near the bottom of this file.
-      </p>
-    </div>
-    <div id="match-filters-row" class="match-filters" style="display:none;">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="Won">Won</button>
-      <button class="filter-btn" data-filter="Lost">Lost</button>
-      <button class="filter-btn" data-filter="Draw">Draw</button>
-    </div>
-    <div class="table-wrap" id="matchTableWrap" style="display:none;">
-      <table id="matchTable"><thead></thead><tbody></tbody></table>
-    </div>
-  </div>
-</main>
+</div><!-- /#profile-view -->
 
-<hr class="charts-divider">
-<section class="charts-section">
-  <div class="charts-header">
-    <h3>Performance Charts</h3>
-    <span>Drawn from live stats</span>
+<!-- ════════════════════════════════════════════════════
+     VIEW 3 — VS MODE
+     ════════════════════════════════════════════════════ -->
+<div id="vs-view" class="spa-view" style="display:none;">
+
+  <div class="vs-top-row">
+    <button class="back-btn" id="vs-back-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Back to Profile
+    </button>
   </div>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-card-title">Top Run-scorers</div>
-      <div id="wrap-runs" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Strike Rate</div>
-      <div id="wrap-sr" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Bowling Wickets Leaderboard</div>
-      <div id="wrap-wkts" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-title">Bowling Economy Rate</div>
-      <div id="wrap-econ" style="position:relative;height:220px;"><div class="chart-loading"><span class="spinner"></span>Loading…</div></div>
+  <div class="vs-grid" id="vs-grid"><!-- filled by JS --></div>
+
+</div><!-- /#vs-view -->
+
+<!-- ════════════════════════════════════════════════════
+     FEATURE 1 — COMPARE PICKER MODAL
+     ════════════════════════════════════════════════════ -->
+<div id="compare-modal" style="display:none;">
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-title">Pick a Player to Compare</div>
+      <div class="modal-search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="modal-search" placeholder="Search player…" autocomplete="off">
+      </div>
+      <div class="modal-player-list" id="modal-player-list"></div>
+      <button class="modal-cancel" id="modal-cancel-btn">Cancel</button>
     </div>
   </div>
-</section>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════
-   CONFIG — the only section you need to edit regularly.
-   ══════════════════════════════════════════════════════════════
-
-   HOW TO GET A CSV LINK FROM GOOGLE SHEETS:
-   1. Open your spreadsheet document
-   2. Go to File → Share → Publish to web
-   3. In the first dropdown, pick the specific sheet/tab you want
-   4. In the second dropdown, choose "Comma-separated values (.csv)"
-   5. Click Publish, then copy the URL shown
-   6. Paste it below in quotes, replacing the placeholder text
-
-   Each tab in your spreadsheet needs its own published CSV link.
+   CONFIG — CSV URLs untouched
    ══════════════════════════════════════════════════════════════ */
-
 const BATTING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
-// ↑ Your batting sheet CSV — already set up
-
 const BOWLING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
-// ↑ Your bowling sheet CSV — already set up
+const MATCH_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1521760675&single=true&output=csv";
 
-const MATCH_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1521760675&single=true&output=csv";
-// ↑ Paste your match history CSV link here (between the quotes)
-//   Replace the whole text MATCH_HISTORY_CSV_URL — keep the quotes.
+const COLOR_RUNS  = "#3b9eff";
+const COLOR_SR    = "#7ec8ff";
+const COLOR_WKTS  = "#4ddfff";
+const COLOR_ECON  = "#ffd166";
+const SUBTEXT_HEX = "#6a9fc8";
+
+/* ── Hero stats shown in profile cards ── */
+const HERO_STATS = [
+  { key: 'Runs',    label: 'Runs',    sheet: 'batting', rank: true,  higherBetter: true  },
+  { key: 'Ave',     label: 'Average', sheet: 'batting', rank: true,  higherBetter: true  },
+  { key: 'S/R',     label: 'S / R',   sheet: 'batting', rank: false, higherBetter: true  },
+  { key: 'Wickets', label: 'Wickets', sheet: 'bowling', rank: true,  higherBetter: true  },
+  { key: 'Economy', label: 'Economy', sheet: 'bowling', rank: false, higherBetter: false },
+];
+
+/* ── VS comparison columns ── */
+const VS_BATTING_COLS = [
+  { key: 'Matches', label: 'Matches', higherWins: true },
+  { key: 'Runs', label: 'Runs', higherWins: true },
+  { key: 'Ave', label: 'Average', higherWins: true },
+  { key: 'S/R', label: 'S/R', higherWins: true },
+  { key: 'HS', label: 'High Score', higherWins: true }
+];
+
+const VS_BOWLING_COLS = [
+  { key: 'Wickets', label: 'Wickets', higherWins: true },
+  { key: 'Economy', label: 'Economy', higherWins: false }, // Lower is better
+  { key: 'Ave', label: 'Average', higherWins: false }      // Lower is better
+];
 
 /* ══════════════════════════════════════════════════════════════
-   CHART COLOURS — change these hex values to adjust bar colours
+   FEATURE 3 — ELITE THRESHOLDS
    ══════════════════════════════════════════════════════════════ */
-const COLOR_RUNS  = "#3b9eff";   /* Top run-scorers bar colour  */
-const COLOR_SR   = "#7ec8ff";   /* S/R bar colour  */
-const COLOR_WKTS  = "#4ddfff";   /* Wickets leaderboard colour  */
-const COLOR_ECON  = "#ffd166";   /* Economy rate bar colour     */
-const SUBTEXT_HEX = "#6a9fc8";   /* Axis label colour           */
+function isElite(key, value) {
+  const val = parseFloat(value);
+  if (isNaN(val)) return false;
+  
+  if (key === 'S/R' && val > 100) return true;
+  if (key === 'Ave' && val > 30) return true;
+  if (key === 'Economy' && val > 0 && val < 6.0) return true;
+  if (key === 'Wickets' && val >= 3) return true;
+  return false;
+}
 
 /* ══════════════════════════════════════════════════════════════
-   END OF CONFIG — no need to edit below this line unless you
-   want to change the site's behaviour or structure.
+   FEATURE 2 — SHOULD A HERO STAT BOX APPEAR?
+   Hide if 0, '-', '—', or empty (applies especially to bowling)
    ══════════════════════════════════════════════════════════════ */
+function heroVisible(cfg, stats) {
+  if (!stats) return false;
+  const raw = stats[cfg.key];
+  if (raw === undefined || raw === null) return false;
+  const s = String(raw).trim();
+  if (s === '' || s === '-' || s === '—') return false;
+  // For bowling hero stats, hide explicit zeros
+  if (cfg.sheet === 'bowling') {
+    const n = parseFloat(s);
+    if (!isNaN(n) && n === 0) return false;
+  }
+  return true;
+}
 
-// ── Tabs ──────────────────────────────────────────────────────
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-  });
-});
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 4 — RANK HELPERS
+   ══════════════════════════════════════════════════════════════ */
+function ordinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
 
-// ── CSV fetcher ───────────────────────────────────────────────
+function calcRank(sheetKey, playerName, statKey, higherIsBetter) {
+  const s = sheets[sheetKey];
+  const pi = s.headers.findIndex(h => h.toLowerCase() === 'player');
+  const si = s.headers.findIndex(h => h === statKey);
+  if (pi < 0 || si < 0) return null;
+
+  const vals = s.rows
+    .map(r => ({ name: (r[pi] || '').toLowerCase(), val: parseFloat(r[si]) }))
+    .filter(x => !isNaN(x.val) && x.val > 0);
+
+  if (vals.length === 0) return null;
+  vals.sort((a, b) => higherIsBetter ? b.val - a.val : a.val - b.val);
+  const idx = vals.findIndex(x => x.name === playerName.toLowerCase());
+  return idx >= 0 ? idx + 1 : null;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 5 — SPA VIEW TRANSITIONS
+   ══════════════════════════════════════════════════════════════ */
+function showView(targetId) {
+  const all = ['dashboard-view', 'profile-view', 'vs-view'];
+  const target = document.getElementById(targetId);
+
+  // Find the currently visible view and fade it out
+  const current = all.map(id => document.getElementById(id)).find(el => el.style.display !== 'none');
+
+  if (current && current !== target) {
+    current.classList.remove('view-entering');
+    current.classList.add('view-leaving');
+    const onLeave = () => {
+      current.removeEventListener('animationend', onLeave);
+      current.classList.remove('view-leaving');
+      current.style.display = 'none';
+    };
+    current.addEventListener('animationend', onLeave, { once: true });
+  }
+
+  // Fade new view in
+  target.style.display = 'block';
+  target.classList.remove('view-entering');
+  void target.offsetWidth; // force reflow
+  target.classList.add('view-entering');
+  target.addEventListener('animationend', () => {
+    target.classList.remove('view-entering');
+  }, { once: true });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CSV FETCHER — original logic preserved exactly
+   ══════════════════════════════════════════════════════════════ */
 async function fetchCSV(url) {
   try {
     const resp = await fetch(url);
     const text = await resp.text();
-    // Split into rows and then into cells
     const allRows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
-    
-    // 1. Find the row where 'Player' or 'Date' lives (likely Row 3)
-    let headerIndex = allRows.findIndex(row => 
+
+    let headerIndex = allRows.findIndex(row =>
       row.some(cell => ['player', 'date'].includes(cell.toLowerCase()))
     );
-
     if (headerIndex === -1) {
       console.error("Could not find a header row containing 'Player' or 'Date'");
       return { headers: [], rows: [] };
     }
 
-    let headers = allRows[headerIndex];
-    
-    // 2. Find which column 'Player' starts in (likely Column B)
-    const firstColIndex = headers.findIndex(h => 
-      ['player', 'date'].includes(h.toLowerCase())
-    );
-    
-    // 3. Trim the headers and rows to start from that column
+    const headers = allRows[headerIndex];
+    const firstColIndex = headers.findIndex(h => ['player', 'date'].includes(h.toLowerCase()));
     const finalHeaders = headers.slice(firstColIndex);
     const finalRows = allRows.slice(headerIndex + 1)
       .map(row => row.slice(firstColIndex))
-      // Filter out rows that are empty or just have a single empty cell
-      .filter(r => r.length > 0 && r[0] !== "" && r[0] !== undefined);
+      .filter(r => r.length > 0 && r[0] !== '' && r[0] !== undefined);
 
     console.log("Success! Found Headers:", finalHeaders);
     return { headers: finalHeaders, rows: finalRows };
@@ -472,7 +1176,9 @@ async function fetchCSV(url) {
   }
 }
 
-// ── Stat tables ───────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════
+   STAT TABLES
+   ══════════════════════════════════════════════════════════════ */
 const sheets = {
   batting: { csv: BATTING_CSV, tableId: 'battingTable', searchId: 'batting-search', countId: 'batting-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
   bowling: { csv: BOWLING_CSV, tableId: 'bowlingTable', searchId: 'bowling-search', countId: 'bowling-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
@@ -491,8 +1197,15 @@ function renderTable(key, query = '') {
   document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
   const tbody = document.getElementById(s.tableId).querySelector('tbody');
   tbody.innerHTML = filtered.length
-    ? filtered.map((r, i) => `<tr style="animation-delay:${i*0.025}s">` + r.map(c => `<td>${c}</td>`).join('') + '</tr>').join('')
+    ? filtered.map((r, i) =>
+        `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
+        r.map(c => `<td>${c}</td>`).join('') + '</tr>'
+      ).join('')
     : '<tr class="state-row"><td>No players match your search.</td></tr>';
+
+  tbody.querySelectorAll('tr[data-player]').forEach(tr => {
+    tr.addEventListener('click', () => openProfile(tr.dataset.player));
+  });
 }
 
 function buildStatTable(key) {
@@ -529,7 +1242,9 @@ async function loadStatSheet(key) {
   }
 }
 
-// ── Match History ─────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════
+   MATCH HISTORY — original logic preserved
+   ══════════════════════════════════════════════════════════════ */
 let matchRows = [], matchHeaders = [], matchFilter = 'all';
 
 function renderMatches() {
@@ -541,7 +1256,7 @@ function renderMatches() {
     ? filtered.map((r, i) =>
         `<tr style="animation-delay:${i*0.025}s">` + r.map((c, ci) => {
           if (ci !== ri) return `<td>${c}</td>`;
-          const cls = {won:'result-won',lost:'result-lost',draw:'result-draw'}[c.toLowerCase()] || '';
+          const cls = {won:'result-won',lost:'result-lost',draw:'result-draw'}[c.toLowerCase()]||'';
           return `<td class="${cls}">${c}</td>`;
         }).join('') + '</tr>').join('')
     : '<tr class="state-row"><td>No matches for this filter.</td></tr>';
@@ -557,8 +1272,7 @@ function renderMatches() {
       <div class="summary-card"><div class="lbl">Won</div><div class="val" style="color:#4ddfff">${won}</div></div>
       <div class="summary-card"><div class="lbl">Lost</div><div class="val" style="color:#ff6b6b">${lost}</div></div>
       <div class="summary-card"><div class="lbl">Draw</div><div class="val" style="color:#ffd166">${draw}</div></div>
-      <div class="summary-card"><div class="lbl">Win Rate</div><div class="val">${p ? Math.round(won/p*100) : 0}<span style="font-size:1.1rem">%</span></div></div>
-    `;
+      <div class="summary-card"><div class="lbl">Win Rate</div><div class="val">${p?Math.round(won/p*100):0}<span style="font-size:1.1rem">%</span></div></div>`;
     cards.style.display = 'grid';
   }
 }
@@ -583,13 +1297,285 @@ async function loadMatches() {
     });
     renderMatches();
   } catch {
-    document.getElementById('match-placeholder').innerHTML =
-      '<p>⚠ Could not load match history. Check your CSV URL.</p>';
+    document.getElementById('match-placeholder').innerHTML = '<p>⚠ Could not load match history. Check your CSV URL.</p>';
     document.getElementById('match-placeholder').style.display = 'block';
   }
 }
 
-// ── Charts ────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════
+   PROFILE HELPERS
+   ══════════════════════════════════════════════════════════════ */
+let currentProfilePlayer = null;
+
+function findPlayerRow(sheetKey, playerName) {
+  const s = sheets[sheetKey];
+  const pIdx = s.headers.findIndex(h => h.toLowerCase() === 'player');
+  if (pIdx < 0) return null;
+  return s.rows.find(r => (r[pIdx]||'').toLowerCase() === playerName.toLowerCase()) || null;
+}
+
+function buildPlayerStats(sheetKey, playerName) {
+  const row = findPlayerRow(sheetKey, playerName);
+  if (!row) return null;
+  const s = sheets[sheetKey];
+  const map = {};
+  s.headers.forEach((h, i) => { map[h] = row[i] || '—'; });
+  return map;
+}
+
+function allPlayers() {
+  const names = new Set();
+  ['batting','bowling'].forEach(k => {
+    const s = sheets[k];
+    const pi = s.headers.findIndex(h => h.toLowerCase() === 'player');
+    if (pi >= 0) s.rows.forEach(r => { if (r[pi]) names.add(r[pi]); });
+  });
+  return [...names].sort();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   OPEN PROFILE  (Features 2, 3, 4)
+   ══════════════════════════════════════════════════════════════ */
+function openProfile(playerName) {
+  currentProfilePlayer = playerName;
+  const battingStats = buildPlayerStats('batting', playerName);
+  const bowlingStats = buildPlayerStats('bowling', playerName);
+
+  // ── Name ─────────────────────────────────────────────────
+  const parts = playerName.trim().split(' ');
+  const last  = parts.pop();
+  const first = parts.join(' ');
+  document.getElementById('profile-name').innerHTML =
+    first ? `${first} <span>${last}</span>` : `<span>${last}</span>`;
+
+  // ── Meta roles ───────────────────────────────────────────
+  const roles = [];
+  if (battingStats) roles.push('Batter');
+  if (bowlingStats) roles.push('Bowler');
+  document.getElementById('profile-meta').textContent =
+    roles.join(' · ') + ' · Maine East Cricket Club';
+
+  // ── FEATURE 2 + 3 + 4: Hero stat boxes ──────────────────
+  const heroWrap = document.getElementById('profile-hero-stats');
+  heroWrap.innerHTML = '';
+
+  HERO_STATS.forEach(cfg => {
+    const src = cfg.sheet === 'bowling' ? bowlingStats : battingStats;
+    // Feature 2: skip invisible stats
+    if (!heroVisible(cfg, src)) return;
+
+    const rawVal = src[cfg.key];
+
+    // Feature 3: elite?
+    const elite = isElite(cfg.key, rawVal);
+
+    // Feature 4: rank badge
+    let rankHTML = '';
+    if (cfg.rank) {
+      const r = calcRank(cfg.sheet, playerName, cfg.key, cfg.higherBetter);
+      if (r !== null) {
+        const cls = r <= 3 ? `rank-${r}` : '';
+        rankHTML = `<div class="rank-badge ${cls}">${ordinal(r)}</div>`;
+      }
+    }
+
+    const div = document.createElement('div');
+    div.className = 'hero-stat' + (elite ? ' elite' : '');
+    div.innerHTML = `
+      <div class="hs-lbl">${cfg.label}</div>
+      <div class="hs-val">${rawVal}</div>
+      ${rankHTML}`;
+    heroWrap.appendChild(div);
+  });
+
+  if (!heroWrap.children.length) {
+    heroWrap.innerHTML = '<div class="hero-stat"><div class="hs-lbl">Club Member</div><div class="hs-val" style="color:var(--subtext);font-size:1.5rem">—</div></div>';
+  }
+
+  // ── FEATURE 3: Batting detail rows ───────────────────────
+  const batRows = document.getElementById('profile-batting-rows');
+  if (battingStats) {
+    batRows.innerHTML = Object.entries(battingStats)
+      .filter(([k]) => k.toLowerCase() !== 'player')
+      .map(([k, v]) => {
+        const elite = isElite(k, v);
+        return `<div class="profile-stat-row${elite ? ' elite-row' : ''}">
+          <span class="profile-stat-key">${k}</span>
+          <span class="profile-stat-val">${v}</span>
+        </div>`;
+      }).join('');
+  } else {
+    batRows.innerHTML = '<div class="profile-no-data">No batting data found</div>';
+  }
+
+  // ── FEATURE 3: Bowling detail rows ───────────────────────
+  const bowlRows = document.getElementById('profile-bowling-rows');
+  if (bowlingStats) {
+    bowlRows.innerHTML = Object.entries(bowlingStats)
+      .filter(([k]) => k.toLowerCase() !== 'player')
+      .map(([k, v]) => {
+        const elite = isElite(k, v);
+        return `<div class="profile-stat-row${elite ? ' elite-row' : ''}">
+          <span class="profile-stat-key">${k}</span>
+          <span class="profile-stat-val">${v}</span>
+        </div>`;
+      }).join('');
+  } else {
+    bowlRows.innerHTML = '<div class="profile-no-data">No bowling data found</div>';
+  }
+
+  showView('profile-view');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 1 — COMPARE MODAL
+   ══════════════════════════════════════════════════════════════ */
+function openCompareModal() {
+  document.getElementById('compare-modal').style.display = 'block';
+  const search = document.getElementById('modal-search');
+  search.value = '';
+  renderModalList('');
+  setTimeout(() => search.focus(), 80);
+}
+function closeCompareModal() {
+  document.getElementById('compare-modal').style.display = 'none';
+}
+
+function renderModalList(query) {
+  const q = query.toLowerCase();
+  const hasBat = new Set(sheets.batting.rows.map(r => (r[0]||'').toLowerCase()));
+  const hasBowl = new Set(sheets.bowling.rows.map(r => (r[0]||'').toLowerCase()));
+
+  const players = allPlayers()
+    .filter(n => n.toLowerCase() !== (currentProfilePlayer||'').toLowerCase())
+    .filter(n => !q || n.toLowerCase().includes(q));
+
+  const list = document.getElementById('modal-player-list');
+  if (!players.length) {
+    list.innerHTML = '<div class="modal-player-item" style="color:var(--muted);cursor:default;">No players found</div>';
+    return;
+  }
+  list.innerHTML = players.map(name => {
+    const ln = name.toLowerCase();
+    const both = hasBat.has(ln) && hasBowl.has(ln);
+    return `<div class="modal-player-item" data-name="${name}">
+      <span class="modal-pip${both ? ' both' : ''}"></span>${name}
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.modal-player-item[data-name]').forEach(item => {
+    item.addEventListener('click', () => {
+      closeCompareModal();
+      openVsMode(currentProfilePlayer, item.dataset.name);
+    });
+  });
+}
+
+document.getElementById('compare-trigger-btn').addEventListener('click', openCompareModal);
+document.getElementById('modal-cancel-btn').addEventListener('click', closeCompareModal);
+document.getElementById('modal-search').addEventListener('input', e => renderModalList(e.target.value));
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeCompareModal();
+});
+
+/* ══════════════════════════════════════════════════════════════
+   FEATURE 1 — VS MODE
+   ══════════════════════════════════════════════════════════════ */
+
+function vsWinner(lv, rv, higherWins) {
+  const l = parseFloat(lv), r = parseFloat(rv);
+  if (isNaN(l) || isNaN(r) || l === r) return 'tie';
+  // logic to determine if the left or right side won based on higherWins flag
+  return higherWins ? (l > r ? 'left' : 'right') : (l < r ? 'left' : 'right');
+}
+
+function buildVsSection(emojiTitle, cols, leftStats, rightStats) {
+  if (!leftStats && !rightStats) return '';
+
+  const rowsHtml = cols.map(col => {
+    const lv = leftStats ? (leftStats[col.key] || '—') : '—';
+    const rv = rightStats ? (rightStats[col.key] || '—') : '—';
+    
+    if (lv === '—' && rv === '—') return '';
+
+    const winner = vsWinner(lv, rv, col.higherWins);
+    
+    // Check for Elite status (Fire emoji)
+    const lElite = isElite(col.key, lv) ? 'elite-val' : '';
+    const rElite = isElite(col.key, rv) ? 'elite-val' : '';
+
+    // Check for Winner status (Background highlight)
+    const lWin = (winner === 'left') ? 'win-highlight' : '';
+    const rWin = (winner === 'right') ? 'win-highlight' : '';
+
+    return `
+      <div class="vs-stat-row">
+        <div class="vs-cell left ${lWin} ${lElite}">${lv}</div>
+        <div class="vs-cell-label">${col.label}</div>
+        <div class="vs-cell right ${rWin} ${rElite}">${rv}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="vs-stat-section">
+      <div class="vs-section-title" style="text-align:center; font-family:var(--font-display); margin: 20px 0; color:var(--accent); font-size:1.5rem;">
+        ${emojiTitle}
+      </div>
+      ${rowsHtml}
+    </div>`;
+}
+
+function openVsMode(playerA, playerB) {
+  const bA = buildPlayerStats('batting', playerA);
+  const wA = buildPlayerStats('bowling', playerA);
+  const bB = buildPlayerStats('batting', playerB);
+  const wB = buildPlayerStats('bowling', playerB);
+
+  const battingSection = buildVsSection('🏏 Batting', VS_BATTING_COLS, bA, bB);
+  const bowlingSection = buildVsSection('⚡ Bowling', VS_BOWLING_COLS, wA, wB);
+
+  document.getElementById('vs-grid').innerHTML = `
+    <!-- Name banners -->
+    <div class="vs-name-row">
+      <div class="vs-name-panel left">
+        <div class="vs-player-tag">Player A</div>
+        <div class="vs-player-name">${playerA}</div>
+      </div>
+      <div class="vs-badge-col">
+        <div class="vs-badge">VS</div>
+      </div>
+      <div class="vs-name-panel right">
+        <div class="vs-player-tag">Player B</div>
+        <div class="vs-player-name">${playerB}</div>
+      </div>
+    </div>
+    <!-- Comparison tables -->
+    ${battingSection}
+    ${bowlingSection}
+    ${(!battingSection && !bowlingSection) ? '<div class="vs-no-data">No comparable data found for these players.</div>' : ''}
+  `;
+
+  document.getElementById('vs-back-btn').onclick = () => showView('profile-view');
+  showView('vs-view');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TABS
+   ══════════════════════════════════════════════════════════════ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.getElementById('profile-back-btn').addEventListener('click', () => showView('dashboard-view'));
+
+/* ══════════════════════════════════════════════════════════════
+   CHARTS — original logic preserved
+   ══════════════════════════════════════════════════════════════ */
 const baseTick = { color: SUBTEXT_HEX, font: { family: "'IBM Plex Mono'", size: 10 } };
 const baseGrid = { color: 'rgba(255,255,255,0.04)' };
 
@@ -625,33 +1611,60 @@ function hbar(wrapId, labels, data, color, unit) {
 function buildCharts(bH, bR, wH, wR) {
   const TOP = 8;
   const nb = findCol(bH, 'Player');
-  const rc = findCol(bH, 'Runs'); 
-  const ac = findCol(bH, 'S/R'); // Matches your 'S/R' column
-  
+  const rc = findCol(bH, 'Runs');
+  const ac = findCol(bH, 'S/R');
   const nw = findCol(wH, 'Player');
   const wc = findCol(wH, 'Wickets');
-  const ec = findCol(wH, 'Economy'); // Matches your 'Economy' column
+  const ec = findCol(wH, 'Economy');
 
-  if (nb>=0 && rc>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP); hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs'); }
-  else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found in sheet</div>';
+  if (nb>=0&&rc>=0){const s=[...bR].sort((a,b)=>parseFloat(b[rc]||0)-parseFloat(a[rc]||0)).slice(0,TOP);hbar('wrap-runs',s.map(r=>r[nb]),s.map(r=>parseFloat(r[rc]||0)),COLOR_RUNS,'runs');}
+  else document.getElementById('wrap-runs').innerHTML='<div class="chart-loading">Column "Runs" not found</div>';
 
-  if (nb>=0 && ac>=0) { const s=[...bR].sort((a,b)=>parseFloat(b[ac]||0)-parseFloat(a[ac]||0)).slice(0,TOP); hbar('wrap-sr',s.map(r=>r[nb]),s.map(r=>parseFloat(r[ac]||0)),COLOR_SR,'S/R'); }
-  else document.getElementById('wrap-sr').innerHTML='<div class="chart-loading">Column "Average" not found in sheet</div>';
+  if (nb>=0&&ac>=0){const s=[...bR].sort((a,b)=>parseFloat(b[ac]||0)-parseFloat(a[ac]||0)).slice(0,TOP);hbar('wrap-sr',s.map(r=>r[nb]),s.map(r=>parseFloat(r[ac]||0)),COLOR_SR,'S/R');}
+  else document.getElementById('wrap-sr').innerHTML='<div class="chart-loading">Column "S/R" not found</div>';
 
-  if (nw>=0 && wc>=0) { const s=[...wR].sort((a,b)=>parseFloat(b[wc]||0)-parseFloat(a[wc]||0)).slice(0,TOP); hbar('wrap-wkts',s.map(r=>r[nw]),s.map(r=>parseFloat(r[wc]||0)),COLOR_WKTS,'wkts'); }
-  else document.getElementById('wrap-wkts').innerHTML='<div class="chart-loading">Column "Wickets" not found in sheet</div>';
+  if (nw>=0&&wc>=0){const s=[...wR].sort((a,b)=>parseFloat(b[wc]||0)-parseFloat(a[wc]||0)).slice(0,TOP);hbar('wrap-wkts',s.map(r=>r[nw]),s.map(r=>parseFloat(r[wc]||0)),COLOR_WKTS,'wkts');}
+  else document.getElementById('wrap-wkts').innerHTML='<div class="chart-loading">Column "Wickets" not found</div>';
 
-  if (nw>=0 && ec>=0) { const s=[...wR].filter(r=>parseFloat(r[ec])>0).sort((a,b)=>parseFloat(a[ec])-parseFloat(b[ec])).slice(0,TOP); hbar('wrap-econ',s.map(r=>r[nw]),s.map(r=>parseFloat(r[ec]||0)),COLOR_ECON,'per over'); }
-  else document.getElementById('wrap-econ').innerHTML='<div class="chart-loading">Column "Economy" not found in sheet</div>';
+  if (nw>=0&&ec>=0){const s=[...wR].filter(r=>parseFloat(r[ec])>0).sort((a,b)=>parseFloat(a[ec])-parseFloat(b[ec])).slice(0,TOP);hbar('wrap-econ',s.map(r=>r[nw]),s.map(r=>parseFloat(r[ec]||0)),COLOR_ECON,'per over');}
+  else document.getElementById('wrap-econ').innerHTML='<div class="chart-loading">Column "Economy" not found</div>';
 }
 
-// ── Boot ──────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════
+   BOOT
+   ══════════════════════════════════════════════════════════════ */
 async function init() {
   await Promise.all([loadStatSheet('batting'), loadStatSheet('bowling')]);
   loadMatches();
   buildCharts(sheets.batting.headers, sheets.batting.rows, sheets.bowling.headers, sheets.bowling.rows);
 }
 init();
+
+/* ══════════════════════════════════════════════════════════════
+   Light Mode
+══════════════════════════════════════════════════════════════ */
+const checkbox = document.querySelector('#checkbox');
+
+// Check for saved preference
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light-mode');
+  checkbox.checked = true;
+}
+
+checkbox.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    document.body.classList.add('light-mode');
+    localStorage.setItem('theme', 'light');
+  } else {
+    document.body.classList.remove('light-mode');
+    localStorage.setItem('theme', 'dark');
+  }
+  
+  // High-performance fix: refresh charts if needed
+  if (window.myChart) updateCharts(); 
+});
+  
+
 </script>
 </body>
 </html>
