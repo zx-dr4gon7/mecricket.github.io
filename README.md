@@ -1,13 +1,9 @@
-import os
-
-readme_content = """# 🏏 Maine East Cricket Stats Dashboard
-
 A professional, dynamic, and mobile-responsive statistics engine built for the **Maine East Cricket Club**. This dashboard fetches live match data from Google Sheets and transforms it into an interactive experience featuring player profiles, head-to-head comparisons, and performance analytics.
 
 ---
 
 ## 🚀 Live Demo
-**[View the Dashboard Live](https://zx-dr4gon7.github.io/reponame/)** *(Note: Replace 'reponame' with your actual repository name in your GitHub settings)*
+**[View the Dashboard Live](https://zx-dr4gon7.github.io/mecricket/)** *(Note: Replace 'reponame' with your actual repository name in your GitHub settings)*
 
 ---
 
