@@ -13,6 +13,30 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
+    /*=======================================================
+    Shareable profile card
+    =========================================================*/
+
+    .share-btn {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  width: 100%;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* This class hides the button from the final image */
+.no-export {
+  display: none !important;
+}
+    
     /* ════════════════════════════════════════════════════
        COLOUR PALETTE
        ════════════════════════════════════════════════════ */
@@ -1054,6 +1078,8 @@ input:checked + .slider:before {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+
+  
 /* ══════════════════════════════════════════════════════════════
    CONFIG — CSV URLs untouched
    ══════════════════════════════════════════════════════════════ */
@@ -1477,6 +1503,8 @@ if (isTopScorer || isTopWicketer) {
   });
 }
 
+  html += `<button class="share-btn" onclick="downloadCard('profile-view')">📸 Save for Instagram</button>`;
+
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1609,6 +1637,7 @@ function openVsMode(playerA, playerB) {
 
   document.getElementById('vs-back-btn').onclick = () => showView('profile-view');
   showView('vs-view');
+  html += `<button class="share-btn" onclick="downloadCard('vs-view')">📸 Save for Instagram</button>`;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1715,6 +1744,35 @@ checkbox.addEventListener('change', (e) => {
   // High-performance fix: refresh charts if needed
   if (window.myChart) updateCharts(); 
 });
+
+
+  /*
+  Profile Card sharing
+  */
+  async function downloadCard(elementId) {
+  const element = document.getElementById(elementId);
+  const btn = element.querySelector('.share-btn');
+  
+  // 1. Hide the button so it's not in the photo
+  if(btn) btn.classList.add('no-export');
+
+  // 2. Capture the element
+  const canvas = await html2canvas(element, {
+    backgroundColor: '#060e1f', // Forces your navy background
+    scale: 2, // Makes it high resolution for IG
+    logging: false,
+    useCORS: true // Helps with loading the logo.png
+  });
+
+  // 3. Download the image
+  const link = document.createElement('a');
+  link.download = `MaineEast_Stats_${Date.now()}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+
+  // 4. Show the button again on the website
+  if(btn) btn.classList.remove('no-export');
+}
   
 
 </script>
