@@ -126,6 +126,86 @@ input:checked + .slider:before { transform: translateX(24px); }
 .icon-sun { left: 6px; }
 .icon-moon { right: 6px; }
 
+
+/* ══════════════════════════════════════════════════════════════
+   STATIC HEADER (Always Dark)
+   ══════════════════════════════════════════════════════════════ */
+header {
+  background-color: #060e1f !important;
+  border-bottom: 1px solid #1a2b4b !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+}
+
+header h1, header h1 span, .header-badge {
+  color: #e8f2ff !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODERN THEME TOGGLE
+   ══════════════════════════════════════════════════════════════ */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 26px;
+  position: relative;
+  width: 50px;
+}
+
+.theme-switch input { display: none; }
+
+.slider {
+  background-color: #1a2b4b; /* Dark track */
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+  border: 1px solid #2a5080;
+  border-radius: 34px;
+}
+
+/* The sliding circle */
+.slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 18px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 18px;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+input:checked + .slider {
+  background-color: var(--accent); /* Turns blue when on */
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Toggle Icons (Customizable) */
+.icon-left, .icon-right {
+  position: absolute;
+  top: 5px;
+  font-size: 12px;
+  user-select: none;
+}
+.icon-left { right: 6px; } /* Moon position */
+.icon-right { left: 7px; }  /* Sun position */
+
 /* ══════════════════════════════════════════════════════════════
    VS MODE & HIGHLIGHTING
    ══════════════════════════════════════════════════════════════ */
@@ -751,7 +831,19 @@ input:checked + .slider:before { transform: translateX(24px); }
     </div>
     <h1>&#8203; | Maine East <span>Cricket</span></h1>
   </a>
-  <div class="header-badge">2025–26 Season</div>
+  
+  <div style="display:flex; align-items:center; gap: 15px;">
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" />
+        <div class="slider round">
+          <span class="icon-left">🌙</span>
+          <span class="icon-right">☀️</span>
+        </div>
+      </label>
+    </div>
+    <div class="header-badge">2025–26 Season</div>
+  </div>
 </header>
 
 <!-- ════════════════════════════════════════════════════
