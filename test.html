@@ -1478,30 +1478,37 @@ if (isTopScorer || isTopWicketer) {
 }
 
 
-// 1. Add the Share Button (if it doesn't exist yet)
-let shareBtn = document.getElementById('profile-share-btn');
-if (!shareBtn) {
-    shareBtn = document.createElement('button');
-    shareBtn.id = 'profile-share-btn';
+// --- ADD THIS AT THE VERY BOTTOM OF YOUR openProfile(playerName) FUNCTION ---
+
+// 1. Add the IG Share button if it's not there
+if (!document.getElementById('ig-share-btn')) {
+    const shareBtn = document.createElement('button');
+    shareBtn.id = 'ig-share-btn';
     shareBtn.className = 'share-btn';
     shareBtn.innerText = '📸 Save for Instagram';
     shareBtn.onclick = () => downloadCard('profile-view');
+    // Appends it to the profile card
     document.querySelector('.profile-card').appendChild(shareBtn);
 }
 
-// 2. Trigger Confetti for the #1 Player
-const runIdx = sheets.batting.headers.findIndex(h => h === 'Runs');
-const topScorer = [...sheets.batting.rows].sort((a,b) => parseFloat(b[runIdx]) - parseFloat(a[runIdx]))[0];
+// 2. Confetti logic (Unique variable names to prevent crashing)
+try {
+    const targetRunIdx = sheets.batting.headers.indexOf('Runs');
+    if (targetRunIdx >= 0) {
+        const topBatter = [...sheets.batting.rows].sort((a, b) => 
+            parseFloat(b[targetRunIdx] || 0) - parseFloat(a[targetRunIdx] || 0)
+        )[0];
 
-if (topScorer && playerName === topScorer[0]) {
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#3b9eff', '#4ade80', '#ffffff']
-    });
-}
-
+        if (topBatter && playerName === topBatter[0]) {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#3b9eff', '#4ade80', '#ffffff']
+            });
+        }
+    }
+} catch (err) { console.error("Confetti error:", err); }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1748,15 +1755,15 @@ checkbox.addEventListener('change', (e) => {
   async function downloadCard(elementId) {
   const element = document.getElementById(elementId);
   const btn = element.querySelector('.share-btn');
-  const backBtn = element.querySelector('.back-btn');
+  const back = element.querySelector('.profile-back-btn') || element.querySelector('.back-btn');
   
   // Hide buttons from the photo
   if(btn) btn.classList.add('no-export');
-  if(backBtn) backBtn.classList.add('no-export');
+  if(back) back.classList.add('no-export');
 
   const canvas = await html2canvas(element, {
-    backgroundColor: '#060e1f', // Matches your dark theme
-    scale: 2, // High resolution for IG
+    backgroundColor: '#060e1f', // Match your navy background
+    scale: 2, // High resolution
     useCORS: true
   });
 
@@ -1765,9 +1772,9 @@ checkbox.addEventListener('change', (e) => {
   link.href = canvas.toDataURL();
   link.click();
 
-  // Show buttons again
+  // Bring buttons back
   if(btn) btn.classList.remove('no-export');
-  if(backBtn) backBtn.classList.remove('no-export');
+  if(back) back.classList.remove('no-export');
 }
 
 </script>
