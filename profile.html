@@ -8,9 +8,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-  <button id="theme-toggle" class="button is-ghost" style="font-size: 1.2rem; color: var(--accent);">
-  <span id="theme-icon">🌙</span>
-  </button>
+  <div class="theme-switch-wrapper">
+  <label class="theme-switch" for="checkbox">
+    <input type="checkbox" id="checkbox" />
+    <div class="slider round">
+      <span class="icon-sun">🔆</span>
+      <span class="icon-moon">☀︎</span>
+    </div>
+  </label>
+</div>
 
   <style>
     /* ════════════════════════════════════════════════════
@@ -64,6 +70,61 @@ h1, h2, h3, .vs-player-name {
   font-family: var(--font-display);
   text-transform: uppercase;
 }
+
+  /* THEME TOGGLE STYLING */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 28px;
+  position: relative;
+  width: 54px;
+}
+
+.theme-switch input { display: none; }
+
+.slider {
+  background-color: #1a2b4b; /* Darker navy for the track */
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+  border: 1px solid var(--border);
+}
+
+.slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 20px;
+  left: 4px;
+  position: absolute;
+  transition: .4s;
+  width: 20px;
+  z-index: 2;
+}
+
+input:checked + .slider { background-color: var(--accent); }
+input:checked + .slider:before { transform: translateX(24px); }
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
+
+/* Emoji positions inside the slider */
+.icon-sun, .icon-moon {
+  position: absolute;
+  top: 4px;
+  font-size: 14px;
+  user-select: none;
+}
+.icon-sun { left: 6px; }
+.icon-moon { right: 6px; }
 
 /* ══════════════════════════════════════════════════════════════
    VS MODE & HIGHLIGHTING
@@ -1496,28 +1557,27 @@ async function init() {
 init();
 
 /* ══════════════════════════════════════════════════════════════
-   BOOT
+   Light Mode
 ══════════════════════════════════════════════════════════════ */
-const toggleBtn = document.getElementById('theme-toggle');
-const themeIcon = document.getElementById('theme-icon');
+const checkbox = document.querySelector('#checkbox');
 
-// Check for saved user preference
+// Check for saved preference
 if (localStorage.getItem('theme') === 'light') {
   document.body.classList.add('light-mode');
-  themeIcon.innerText = '☀️';
+  checkbox.checked = true;
 }
 
-toggleBtn.addEventListener('click', () => {
-  document.body.classList.toggle('light-mode');
+checkbox.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    document.body.classList.add('light-mode');
+    localStorage.setItem('theme', 'light');
+  } else {
+    document.body.classList.remove('light-mode');
+    localStorage.setItem('theme', 'dark');
+  }
   
-  const isLight = document.body.classList.contains('light-mode');
-  themeIcon.innerText = isLight ? '☀️' : '🌙';
-  
-  // Save preference
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  
-  // Refresh charts if they exist to match new colors
-  if (typeof updateChartsColor === "function") updateChartsColor();
+  // High-performance fix: refresh charts if needed
+  if (window.myChart) updateCharts(); 
 });
   
 
