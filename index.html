@@ -374,57 +374,32 @@ input:checked + .slider:before {
     }
 
     /* ── Tables ── */
-    /* 📱 MOBILE RESPONSIVE TABLE FIX */
-/* 💻 PC VERSION (Restore the original look) */
-.table-wrap {
-  width: 100%;
-  background: var(--surface);
-  border-radius: 8px;
-  overflow: hidden; /* No scrollbars on PC */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-body); /* Restores DM Sans */
-  color: var(--text);
-}
-
-th {
-  font-family: var(--font-display); /* Restores Oswald */
-  text-transform: uppercase;
-  background: rgba(255,255,255,0.03);
-  color: var(--accent);
-}
-
-/* 📱 MOBILE VERSION (Only kicks in on small screens) */
-@media (max-width: 768px) {
-  .table-wrap {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 650px; /* Only force width on mobile so we can scroll */
-  }
-
-  /* Sticky name only on mobile so PC stays clean */
-  table td:first-child, 
-  table th:first-child {
-    position: sticky;
-    left: 0;
-    background-color: var(--surface) !important;
-    z-index: 10;
-    border-right: 1px solid var(--border);
-  }
-}
-
-/* Fix for the Loading Spinner alignment */
-.state-row td {
-  text-align: center;
-  padding: 40px !important;
-  font-family: var(--font-body);
-}
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--header-bg); }
+    th {
+      font-family: var(--font-mono);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent2);
+      padding: 0.85rem 1rem; text-align: left;
+      cursor: pointer; user-select: none; white-space: nowrap;
+      transition: background .15s;
+    }
+    th:hover { background: rgba(59,158,255,0.1); }
+    th .si { margin-left: 4px; opacity: 0.35; font-style: normal; }
+    th.sort-asc .si, th.sort-desc .si { opacity: 1; color: var(--accent); }
+    tbody tr { border-top: 1px solid var(--border); transition: background .12s; }
+    tbody tr:hover { background: rgba(59,158,255,0.08); cursor: pointer; }
+    td { font-size: 0.875rem; padding: 0.75rem 1rem; color: var(--text); }
+    td:first-child { font-weight: 500; color: var(--accent2); }
+    .state-row td {
+      text-align: center; padding: 2.5rem; color: var(--subtext);
+      font-family: var(--font-mono); font-size: 0.78rem;
+    }
     .spinner {
       display: inline-block; width: 16px; height: 16px;
       border: 2px solid var(--border); border-top-color: var(--accent);
