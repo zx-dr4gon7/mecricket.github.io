@@ -3,7 +3,7 @@ A professional, dynamic, and mobile-responsive statistics engine built for the *
 ---
 
 ## 🚀 Live Demo
-**[View the Dashboard Live](https://zx-dr4gon7.github.io/mecricket.github.io/)** *(Note: Replace 'reponame' with your actual repository name in your GitHub settings)*
+**[View the Dashboard Live](https://zx-dr4gon7.github.io/mecricket.github.io/)**
 
 ---
 
@@ -64,9 +64,3 @@ This project is open-source and available under the **MIT License**.
 ---
 *Created with ❤️ for the Maine East Cricket Community.*
 """
-
-# Write the content to a file
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(readme_content)
-
-print("README.md has been generated.")
