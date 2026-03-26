@@ -374,32 +374,46 @@ input:checked + .slider:before {
     }
 
     /* ── Tables ── */
-    .table-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-    }
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { background: var(--header-bg); }
-    th {
-      font-family: var(--font-mono);
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--accent2);
-      padding: 0.85rem 1rem; text-align: left;
-      cursor: pointer; user-select: none; white-space: nowrap;
-      transition: background .15s;
-    }
-    th:hover { background: rgba(59,158,255,0.1); }
-    th .si { margin-left: 4px; opacity: 0.35; font-style: normal; }
-    th.sort-asc .si, th.sort-desc .si { opacity: 1; color: var(--accent); }
-    tbody tr { border-top: 1px solid var(--border); transition: background .12s; }
-    tbody tr:hover { background: rgba(59,158,255,0.08); cursor: pointer; }
-    td { font-size: 0.875rem; padding: 0.75rem 1rem; color: var(--text); }
-    td:first-child { font-weight: 500; color: var(--accent2); }
-    .state-row td {
-      text-align: center; padding: 2.5rem; color: var(--subtext);
-      font-family: var(--font-mono); font-size: 0.78rem;
-    }
+    /* 📱 MOBILE RESPONSIVE TABLE FIX */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;            /* Enables horizontal scroll */
+  -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
+  background: var(--surface);
+  border-radius: 8px;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;            /* Forces the table to stay wide so you can scroll */
+  font-size: 0.95rem;
+}
+
+/* 🏆 STICKY NAMES: Keeps the player name visible while you scroll right */
+table th:first-child, 
+table td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: var(--surface) !important;
+  z-index: 2;
+  border-right: 2px solid var(--border);
+  min-width: 120px;            /* Ensures names don't wrap too much */
+}
+
+/* Ensure the header stays above the sticky body cells */
+table thead th:first-child {
+  z-index: 3;
+}
+
+/* Fix for the 'Stuck Loading' - ensures state rows can show/hide */
+.state-row td {
+  text-align: center;
+  padding: 40px !important;
+  background: transparent !important; /* Prevents sticky color from hiding spinner */
+}
     .spinner {
       display: inline-block; width: 16px; height: 16px;
       border: 2px solid var(--border); border-top-color: var(--accent);
