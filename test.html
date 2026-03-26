@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=DM+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     /* ════════════════════════════════════════════════════
@@ -809,6 +811,40 @@ input:checked + .slider:before {
       .hero-stat .hs-val { font-size: 1.7rem; }
       .compare-btn .compare-label { display: none; }
     }
+
+    /* ════════════════════════════════════════════════════
+   MOBILE TABLE RESPONSIVENESS
+   ════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  table {
+    /* Ensures the table doesn't collapse and forces scrolling */
+    width: 100%;
+    display: table;
+  }
+
+  /* Sticky First Column (Player Name) */
+  .table-wrap th:first-child,
+  .table-wrap td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: var(--surface); /* Matches your existing theme */
+    border-right: 1px solid var(--border);
+  }
+
+  /* Ensures header stays above the sticky body cells */
+  .table-wrap th:first-child {
+    z-index: 3;
+    background-color: var(--header-bg, var(--surface));
+  }
+}
+    
   </style>
 </head>
 <body>
@@ -1425,6 +1461,22 @@ function openProfile(playerName) {
   }
 
   showView('profile-view');
+  // Trigger Confetti for the Top Scorer or Top Wicket Taker
+const runIdx = sheets.batting.headers.indexOf('Runs');
+const wktIdx = sheets.bowling.headers.indexOf('Wickets');
+
+const isTopScorer = [...sheets.batting.rows].sort((a,b) => b[runIdx]-a[runIdx])[0][0] === playerName;
+const isTopWicketer = [...sheets.bowling.rows].sort((a,b) => b[wktIdx]-a[wktIdx])[0][0] === playerName;
+
+if (isTopScorer || isTopWicketer) {
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 },
+    colors: ['#3b9eff', '#4ade80', '#ffffff']
+  });
+}
+
 }
 
 /* ══════════════════════════════════════════════════════════════
