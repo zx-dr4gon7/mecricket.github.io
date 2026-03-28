@@ -1084,7 +1084,6 @@ input:checked + .slider:before {
 const BATTING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=960895682&single=true&output=csv";
 const BOWLING_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1022493287&single=true&output=csv";
 const MATCH_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=1521760675&single=true&output=csv";
-const PHOTOS_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXsO-A29-HMU5T5v3lW6v474irClAhDXXE3NcXXkJm4r77z0lQJiG2xEoLR9kZJmreiIwXGNxfFR58/pub?gid=349941877&single=true&output=csv";
 
 const COLOR_RUNS  = "#3b9eff";
 const COLOR_SR    = "#7ec8ff";
@@ -1258,10 +1257,11 @@ function renderTable(key, query = '') {
   document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
   const tbody = document.getElementById(s.tableId).querySelector('tbody');
   tbody.innerHTML = filtered.length
-    ? filtered.map((r, i) =>
-        `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
-        r.map(c => `<td>${c}</td>`).join('') + '</tr>'
-      ).join('')
+    ? filtered.map((r, i) => {
+        const photoIdx = s.headers.findIndex(h => h.toLowerCase().startsWith('photo'));
+        return `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
+          r.map((c, ci) => ci === photoIdx ? '' : `<td>${c}</td>`).join('') + '</tr>';
+      }).join('')
     : '<tr class="state-row"><td>No players match your search.</td></tr>';
 
   tbody.querySelectorAll('tr[data-player]').forEach(tr => {
@@ -1273,6 +1273,7 @@ function buildStatTable(key) {
   const s = sheets[key];
   const thead = document.getElementById(s.tableId).querySelector('thead');
   thead.innerHTML = '<tr>' + s.headers.map((h, i) =>
+    h.toLowerCase().startsWith('photo') ? '' :
     `<th data-col="${i}" data-key="${key}">${h}<em class="si">⇅</em></th>`
   ).join('') + '</tr>';
   thead.querySelectorAll('th').forEach(th => {
@@ -1307,48 +1308,6 @@ async function loadStatSheet(key) {
    MATCH HISTORY — original logic preserved
    ══════════════════════════════════════════════════════════════ */
 let matchRows = [], matchHeaders = [], matchFilter = 'all';
-
-/* ══════════════════════════════════════════════════════════════
-   PHOTOS MAP  — name → URL
-   ══════════════════════════════════════════════════════════════ */
-let photosMap = {}; // populated by loadPhotos()
-
-async function loadPhotos() {
-  // 1. DOUBLE CHECK THESE TWO STRINGS
-  const sheetId = '1196G7Y6Yg6_L49t4E-z54Wp1Z13sU_0eD-EizK26Y7M';
-  const gid = '1849185121'; 
-  
-  // The 't' parameter at the end forces Google to bypass any old cached/broken versions
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}&t=${Date.now()}`;
-
-  console.log("Checking Photos at:", url);
-
-  try {
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      console.error(`🔴 GOOGLE REJECTED REQUEST: Status ${response.status}`);
-      throw new Error("Sheet not published or ID is wrong.");
-    }
-    
-    const csvText = await response.text();
-    
-    // Check if we actually got CSV data or just a login page
-    if (csvText.includes("<!DOCTYPE html>") || csvText.includes("login")) {
-      console.error("🔴 GOOGLE REDIRECTED TO LOGIN: Your sheet is NOT 'Published to Web' correctly.");
-      return;
-    }
-
-    const rows = csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
-    rows.shift(); // Remove headers
-
-    sheets.photos = { rows };
-    console.log("🟢 PHOTOS LOADED:", sheets.photos.rows);
-  } catch (err) {
-    console.error("🔴 FETCH CRASHED:", err);
-    sheets.photos = { rows: [] };
-  }
-}
 
 function renderMatches() {
   const ri = matchHeaders.findIndex(h => h.toLowerCase() === 'result');
@@ -1451,11 +1410,15 @@ function openProfile(playerName) {
   document.getElementById('profile-name').innerHTML =
     first ? `${first} <span>${last}</span>` : `<span>${last}</span>`;
 
-  // ── Avatar (photo or initials fallback) ──────────────────
+  // ── Avatar (photo from Batting sheet or initials fallback) ─
   const avatarEl = document.getElementById('profile-avatar');
   const initials = (first ? first[0] : '') + (last ? last[0] : '');
-  const photoUrl = photosMap[playerName.toLowerCase()];
-  if (photoUrl) {
+  // Find the photo column — supports 'Photo', 'Photo URL', or 'photo'
+  const photoKey = battingStats
+    ? Object.keys(battingStats).find(k => k.toLowerCase().startsWith('photo'))
+    : null;
+  const photoUrl = photoKey ? (battingStats[photoKey] || '').trim() : '';
+  if (photoUrl && photoUrl !== '—') {
     avatarEl.innerHTML = `<img src="${photoUrl}" alt="${playerName}" onerror="this.parentElement.innerHTML='${initials}'">`;
   } else {
     avatarEl.innerHTML = initials;
@@ -1509,7 +1472,7 @@ function openProfile(playerName) {
   const batRows = document.getElementById('profile-batting-rows');
   if (battingStats) {
     batRows.innerHTML = Object.entries(battingStats)
-      .filter(([k]) => k.toLowerCase() !== 'player')
+      .filter(([k]) => k.toLowerCase() !== 'player' && !k.toLowerCase().startsWith('photo'))
       .map(([k, v]) => {
         const elite = isElite(k, v);
         return `<div class="profile-stat-row${elite ? ' elite-row' : ''}">
@@ -1763,7 +1726,7 @@ function buildCharts(bH, bR, wH, wR) {
    BOOT
    ══════════════════════════════════════════════════════════════ */
 async function init() {
-  await Promise.all([loadStatSheet('batting'), loadStatSheet('bowling'), loadPhotos()]);
+  await Promise.all([loadStatSheet('batting'), loadStatSheet('bowling')]);
   loadMatches();
   buildCharts(sheets.batting.headers, sheets.batting.rows, sheets.bowling.headers, sheets.bowling.rows);
 }
