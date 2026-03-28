@@ -1314,24 +1314,39 @@ let matchRows = [], matchHeaders = [], matchFilter = 'all';
 let photosMap = {}; // populated by loadPhotos()
 
 async function loadPhotos() {
+  // 1. DOUBLE CHECK THESE TWO STRINGS
   const sheetId = '1196G7Y6Yg6_L49t4E-z54Wp1Z13sU_0eD-EizK26Y7M';
   const gid = '1849185121'; 
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+  
+  // The 't' parameter at the end forces Google to bypass any old cached/broken versions
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}&t=${Date.now()}`;
+
+  console.log("Checking Photos at:", url);
 
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP Error: ${response.status}. Is the sheet published to web?`);
+    
+    if (!response.ok) {
+      console.error(`🔴 GOOGLE REJECTED REQUEST: Status ${response.status}`);
+      throw new Error("Sheet not published or ID is wrong.");
+    }
     
     const csvText = await response.text();
-    const rows = csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
-    const headers = rows.shift(); // Remove name/photo header
+    
+    // Check if we actually got CSV data or just a login page
+    if (csvText.includes("<!DOCTYPE html>") || csvText.includes("login")) {
+      console.error("🔴 GOOGLE REDIRECTED TO LOGIN: Your sheet is NOT 'Published to Web' correctly.");
+      return;
+    }
 
-    sheets.photos = { headers, rows };
-    console.log("✅ Photos loaded successfully:", rows.length, "entries found.");
+    const rows = csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+    rows.shift(); // Remove headers
+
+    sheets.photos = { rows };
+    console.log("🟢 PHOTOS LOADED:", sheets.photos.rows);
   } catch (err) {
-    console.error("❌ Photo Fetch Failed:", err.message);
-    // Initialize with empty data so the rest of the site doesn't crash
-    sheets.photos = { headers: [], rows: [] };
+    console.error("🔴 FETCH CRASHED:", err);
+    sheets.photos = { rows: [] };
   }
 }
 
