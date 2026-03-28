@@ -533,6 +533,25 @@ input:checked + .slider:before {
       position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, var(--accent) 0%, transparent 70%);
     }
+
+    /* ── Profile Avatar ── */
+    .profile-top-row {
+      display: flex; align-items: center; gap: 1.5rem; margin-bottom: 0.5rem;
+    }
+    .profile-avatar {
+      width: 100px; height: 100px; border-radius: 50%;
+      border: 3px solid var(--accent);
+      overflow: hidden; flex-shrink: 0;
+      background: rgba(59,158,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.03em;
+    }
+    .profile-avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .profile-name-block { flex: 1; min-width: 0; }
+
     .profile-name {
       font-family: var(--font-display);
       font-size: clamp(2rem, 6vw, 3.5rem);
@@ -1000,8 +1019,13 @@ input:checked + .slider:before {
 
   <div class="profile-card">
     <div class="profile-hero">
-      <div class="profile-name" id="profile-name">Player Name</div>
-      <div class="profile-meta" id="profile-meta">Maine East Cricket Club</div>
+      <div class="profile-top-row">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-name-block">
+          <div class="profile-name" id="profile-name">Player Name</div>
+          <div class="profile-meta" id="profile-meta">Maine East Cricket Club</div>
+        </div>
+      </div>
       <div class="profile-hero-stats" id="profile-hero-stats"></div>
     </div>
     <div class="profile-tables-grid">
@@ -1233,10 +1257,11 @@ function renderTable(key, query = '') {
   document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
   const tbody = document.getElementById(s.tableId).querySelector('tbody');
   tbody.innerHTML = filtered.length
-    ? filtered.map((r, i) =>
-        `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
-        r.map(c => `<td>${c}</td>`).join('') + '</tr>'
-      ).join('')
+    ? filtered.map((r, i) => {
+        const photoIdx = s.headers.findIndex(h => h.toLowerCase().startsWith('photo'));
+        return `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
+          r.map((c, ci) => ci === photoIdx ? '' : `<td>${c}</td>`).join('') + '</tr>';
+      }).join('')
     : '<tr class="state-row"><td>No players match your search.</td></tr>';
 
   tbody.querySelectorAll('tr[data-player]').forEach(tr => {
@@ -1248,6 +1273,7 @@ function buildStatTable(key) {
   const s = sheets[key];
   const thead = document.getElementById(s.tableId).querySelector('thead');
   thead.innerHTML = '<tr>' + s.headers.map((h, i) =>
+    h.toLowerCase().startsWith('photo') ? '' :
     `<th data-col="${i}" data-key="${key}">${h}<em class="si">⇅</em></th>`
   ).join('') + '</tr>';
   thead.querySelectorAll('th').forEach(th => {
@@ -1384,6 +1410,20 @@ function openProfile(playerName) {
   document.getElementById('profile-name').innerHTML =
     first ? `${first} <span>${last}</span>` : `<span>${last}</span>`;
 
+  // ── Avatar (photo from Batting sheet or initials fallback) ─
+  const avatarEl = document.getElementById('profile-avatar');
+  const initials = (first ? first[0] : '') + (last ? last[0] : '');
+  // Find the photo column — supports 'Photo', 'Photo URL', or 'photo'
+  const photoKey = battingStats
+    ? Object.keys(battingStats).find(k => k.toLowerCase().startsWith('photo'))
+    : null;
+  const photoUrl = photoKey ? (battingStats[photoKey] || '').trim() : '';
+  if (photoUrl && photoUrl !== '—') {
+    avatarEl.innerHTML = `<img src="${photoUrl}" alt="${playerName}" onerror="this.parentElement.innerHTML='${initials}'">`;
+  } else {
+    avatarEl.innerHTML = initials;
+  }
+
   // ── Meta roles ───────────────────────────────────────────
   const roles = [];
   if (battingStats) roles.push('Batter');
@@ -1432,7 +1472,7 @@ function openProfile(playerName) {
   const batRows = document.getElementById('profile-batting-rows');
   if (battingStats) {
     batRows.innerHTML = Object.entries(battingStats)
-      .filter(([k]) => k.toLowerCase() !== 'player')
+      .filter(([k]) => k.toLowerCase() !== 'player' && !k.toLowerCase().startsWith('photo'))
       .map(([k, v]) => {
         const elite = isElite(k, v);
         return `<div class="profile-stat-row${elite ? ' elite-row' : ''}">
