@@ -1314,19 +1314,24 @@ let matchRows = [], matchHeaders = [], matchFilter = 'all';
 let photosMap = {}; // populated by loadPhotos()
 
 async function loadPhotos() {
+  const sheetId = '1196G7Y6Yg6_L49t4E-z54Wp1Z13sU_0eD-EizK26Y7M';
+  const gid = '1849185121'; 
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+
   try {
-    const resp = await fetch(PHOTOS_CSV);
-    const text = await resp.text();
-    const rows = text.trim().split('\n').map(r => r.split(',').map(c => c.trim()));
-    // first row is header (Name, Photo URL) — skip it
-    for (let i = 1; i < rows.length; i++) {
-      const name = rows[i][0];
-      const url  = rows[i].slice(1).join(',').trim(); // rejoin in case URL had commas
-      if (name && url) photosMap[name.toLowerCase()] = url;
-    }
-    console.log('Photos loaded:', Object.keys(photosMap).length);
-  } catch (e) {
-    console.warn('Could not load photos sheet:', e);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}. Is the sheet published to web?`);
+    
+    const csvText = await response.text();
+    const rows = csvText.split('\n').map(row => row.split(',').map(cell => cell.trim()));
+    const headers = rows.shift(); // Remove name/photo header
+
+    sheets.photos = { headers, rows };
+    console.log("✅ Photos loaded successfully:", rows.length, "entries found.");
+  } catch (err) {
+    console.error("❌ Photo Fetch Failed:", err.message);
+    // Initialize with empty data so the rest of the site doesn't crash
+    sheets.photos = { headers: [], rows: [] };
   }
 }
 
