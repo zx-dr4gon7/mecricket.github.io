@@ -1118,14 +1118,23 @@ const VS_BOWLING_COLS = [
 /* ══════════════════════════════════════════════════════════════
    FEATURE 3 — ELITE THRESHOLDS
    ══════════════════════════════════════════════════════════════ */
-function isElite(key, value) {
+function isElite(key, value, type = 'batting') {
   const val = parseFloat(value);
-  if (isNaN(val)) return false;
+  if (isNaN(val) || val === 0) return false;
   
-  if (key === 'S/R' && val > 100) return true;
-  if (key === 'Ave' && val > 30) return true;
-  if (key === 'Economy' && val > 0 && val < 6.0) return true;
-  if (key === 'Wickets' && val >= 3) return true;
+  if (type === 'batting') {
+    if (key === 'S/R' && val >= 125) return true; // Elite Strike Rate
+    if (key === 'Ave' && val >= 35) return true;  // Elite Batting Ave
+    if (key === '100s' && val >= 1) return true;
+  }
+
+  if (type === 'bowling') {
+    // LOWER is better for bowling average and economy
+    if (key === 'Ave' && val > 0 && val <= 18) return true; 
+    if (key === 'Econ' && val > 0 && val <= 6.0) return true;
+    if (key === 'W' && val >= 10) return true; // Elite season total
+  }
+
   return false;
 }
 
@@ -1244,29 +1253,29 @@ const sheets = {
   bowling: { csv: BOWLING_CSV, tableId: 'bowlingTable', searchId: 'bowling-search', countId: 'bowling-count', headers: [], rows: [], sortCol: -1, sortDir: 1 },
 };
 
-function renderTable(key, query = '') {
-  const s = sheets[key];
-  const q = query.toLowerCase();
-  const filtered = q ? s.rows.filter(r => r.some(c => c.toLowerCase().includes(q))) : [...s.rows];
-  if (s.sortCol >= 0) {
-    filtered.sort((a, b) => {
-      const an = parseFloat(a[s.sortCol]), bn = parseFloat(b[s.sortCol]);
-      return (!isNaN(an) && !isNaN(bn)) ? (an - bn) * s.sortDir : a[s.sortCol].localeCompare(b[s.sortCol]) * s.sortDir;
-    });
-  }
-  document.getElementById(s.countId).textContent = filtered.length + ' player' + (filtered.length !== 1 ? 's' : '');
-  const tbody = document.getElementById(s.tableId).querySelector('tbody');
-  tbody.innerHTML = filtered.length
-    ? filtered.map((r, i) => {
-        const photoIdx = s.headers.findIndex(h => h.toLowerCase().startsWith('photo'));
-        return `<tr data-player="${r[0]}" style="animation-delay:${i*0.025}s">` +
-          r.map((c, ci) => ci === photoIdx ? '' : `<td>${c}</td>`).join('') + '</tr>';
-      }).join('')
-    : '<tr class="state-row"><td>No players match your search.</td></tr>';
+function renderTable(id, headers, rows) {
+  const container = document.getElementById(id);
+  // Determine if this is a batting or bowling table based on the ID
+  const tableType = id.toLowerCase().includes('batting') ? 'batting' : 'bowling';
 
-  tbody.querySelectorAll('tr[data-player]').forEach(tr => {
-    tr.addEventListener('click', () => openProfile(tr.dataset.player));
+  let html = `<table><thead><tr>`;
+  headers.forEach(h => html += `<th>${h}</th>`);
+  html += `</tr></thead><tbody>`;
+
+  rows.forEach(row => {
+    html += `<tr onclick="openProfile('${row[0]}')">`;
+    row.forEach((cell, j) => {
+      // --- CHANGE THIS LINE ---
+      // We now pass tableType ('batting' or 'bowling') to the function
+      const elite = isElite(headers[j], cell, tableType); 
+      
+      html += `<td class="${elite ? 'elite-cell' : ''}">${cell}</td>`;
+    });
+    html += `</tr>`;
   });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
 }
 
 function buildStatTable(key) {
