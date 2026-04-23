@@ -1116,14 +1116,14 @@ const VS_BOWLING_COLS = [
 ];
 
 /* ══════════════════════════════════════════════════════════════
-   FEATURE 3 — ELITE THRESHOLDS
+   FEATURE 3 — ELITE THRESHOLDS 
    ══════════════════════════════════════════════════════════════ */
 function isElite(key, value) {
   const val = parseFloat(value);
   if (isNaN(val)) return false;
   
   if (key === 'S/R' && val > 100) return true;
-  if (key === 'Ave' && val > 30) return true;
+  // if (key === 'Ave' && val > 30) return true;
   if (key === 'Economy' && val > 0 && val < 6.0) return true;
   if (key === 'Wickets' && val >= 3) return true;
   return false;
